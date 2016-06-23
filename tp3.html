@@ -9,17 +9,44 @@ body {
   font: 10px sans-serif;
 }
 
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
 .axis path,
 .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
+.subbar rect:hover {
+  /*fill: orangered !important;*/
+  stroke: #000;
 
 </style>
 
+<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf&#45;8"></script> -->
+<!-- <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3&#45;tip/0.6.3/d3&#45;tip.min.js" charset="utf&#45;8"></script> -->
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-
+<script type="text/javascript" src="d3-tip.min.js" charset="utf-8"></script>
 
 <body>
 
@@ -28,7 +55,7 @@ body {
 
 
 
-<script>
+<script type="text/javascript">
 
 
 
@@ -63,8 +90,7 @@ var svg = d3.select("#figure").append("svg")
   color.domain(["Sadness", "Negative",  "Positive", "Joy"]);
 
   // d3.csv("https://raw.githubusercontent.com/maraujo/leafless/master/visu4.csv", function(error, data) {
-       // d3.csv("https://github.com/iurobpn/iurobpn.github.io/blob/master/visu4.csv", function(error, data) {
-d3.csv("visu4.csv", function(error, data) {
+ d3.csv("visu4.csv", function(error, data)  {
 
   data.forEach(function(d) {
     // calc percentages
@@ -75,7 +101,19 @@ d3.csv("visu4.csv", function(error, data) {
     d["Joy"] = +d["joy"]*100/(d.N - d["neutral"]);
     var x0 = -1*( d["Negative"] + d["Sadness"]);
     var idx = 0;
-    d.boxes = color.domain().map(function(name) { return {name: name, x0: x0, x1: x0 += +d[name], N: +d.N- d["neutral"], n: +d[idx += 1]}; });
+    d.boxes = color.domain().map(function(name) { return {
+      joy: d.joy,
+      sadness: d.sadness,
+      positive: d.positive,
+      positive: d.positive,
+      negative: d.negative,
+      author: d.author,
+      name: name,
+      x0: x0,
+      x1: x0 += +d[name],
+      N: +d.N- d["neutral"],
+      n: +d[idx += 1]
+    }; });
   });
 
   var min_val = d3.min(data, function(d) {
@@ -88,6 +126,22 @@ d3.csv("visu4.csv", function(error, data) {
 
   x.domain([min_val, max_val]).nice();
   y.domain(data.map(function(d) { return d.author; }));
+
+
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<div style='font-size:15px'>\
+      <div><strong>Authors:</strong> <span style='font-weight: 200;'>" + d.author + "</span></div>\
+      <div><strong>Joy:</strong> <span style='font-weight: 200;'>" + d.joy + "</span></div>\
+      <div><strong>Positive:</strong> <span style='font-weight: 200;'>" + d.positive + "</span></div>\
+      <div><strong>Negative:</strong> <span style='font-weight: 200;'>" + d.negative + "</span></div>\
+      <div><strong>Sadness:</strong> <span style='font-weight: 200;'>" + d.sadness + "</span></div>\
+    </div>";
+  })
+
+
 
   svg.append("g")
       .attr("class", "x axis")
@@ -103,9 +157,15 @@ d3.csv("visu4.csv", function(error, data) {
       .attr("class", "bar")
       .attr("transform", function(d) { return "translate(0," + y(d.author) + ")"; });
 
+
+
+  svg.call(tip);
+
   var bars = vakken.selectAll("rect")
       .data(function(d) { return d.boxes; })
-    .enter().append("g").attr("class", "subbar");
+    .enter().append("g").attr("class", "subbar").on('mouseover', tip.show)
+    .on('mouseout', tip.hide)
+      ;
 
   bars.append("rect")
       .attr("height", y.rangeBand())
@@ -120,7 +180,7 @@ d3.csv("visu4.csv", function(error, data) {
       .attr("dx", "0.5em")
       .style("font" ,"10px sans-serif")
       .style("text-anchor", "begin")
-      .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
+      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
 
   vakken.insert("rect",":first-child")
       .attr("height", y.rangeBand())
@@ -169,6 +229,8 @@ d3.csv("visu4.csv", function(error, data) {
       .style("fill", "none")
       .style("stroke", "#000")
       .style("shape-rendering", "crispEdges")
+
+
 
   var movesize = width/2 - startp.node().getBBox().width/2;
   d3.selectAll(".legendbox").attr("transform", "translate(" + movesize  + ",0)");
