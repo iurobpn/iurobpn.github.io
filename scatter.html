@@ -77,14 +77,20 @@ d3.csv("authors.csv", function(error, data) {
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
-    d.Calories = +d.Calories;
+    d.y = +d.y;
     d.x = +d.x;
 //    console.log(d);
   });
 
+  var x_max = d3.max(data, xValue);
+  var x_min = d3.min(data, xValue);
+  var y_max = d3.max(data, yValue);
+  var y_min = d3.min(data, yValue);
+
+  var margin_svg = 5;
   // don't want dots overlapping axis, so add in buffer to data domain
-  xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-  yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+  xScale.domain([d3.min(data, xValue)-margin_svg, d3.max(data, xValue)+margin_svg]);
+  yScale.domain([d3.min(data, yValue)-margin_svg, d3.max(data, yValue)+margin_svg]);
 
   // x-axis
   svg.append("g")
@@ -134,6 +140,13 @@ d3.csv("authors.csv", function(error, data) {
                .duration(500)
                .style("opacity", 0);
       });
+
+  // d3.selectAll("p")
+	//   .data([x_min,x_max,y_min,y_max])
+	//   .enter()
+	//   .append("p")
+	//   .text(function(d) { return d;})
+	//   .exit();
 
   // draw legend
   // var legend = svg.selectAll(".legend")
