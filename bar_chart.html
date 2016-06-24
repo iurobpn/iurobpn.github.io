@@ -14,6 +14,13 @@
 	  stroke: #000;
 	  shape-rendering: crispEdges;
 	}
+	.bar {
+	  fill: steelblue;
+	}
+
+	.bar:hover {
+	  fill: darkblue;
+	}
 
 	</style>
 </head>
@@ -90,7 +97,8 @@ d3.csv("bar-data.csv", function(error, data) {
   svg.selectAll("bar")
       .data(data)
     .enter().append("rect")
-      .style("fill", "steelblue")
+      .attr("class", "bar")
+      // .style("fill", "steelblue")
       .attr("x", function(d) { return xScale(d.date); })
       .attr("width", xScale.rangeBand())
       .attr("y", function(d) { return yScale(d.value); })
