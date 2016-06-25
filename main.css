@@ -15,12 +15,12 @@ body {
   stroke: #000;
 }
 
-.tooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
-}
+/* .tooltip { */
+/*   position: absolute; */
+/*   width: 200px; */
+/*   height: 28px; */
+/*   pointer-events: none; */
+/* } */
 
 div {
 	background-color: white;
@@ -65,15 +65,42 @@ div.font {
 }
 
 .tooltip_scatter {
-	position: absolute;
-	font-size: 10px;
 	width: 140px;
-	height: 28px;
-	background-color: black;
-	color: white;
-	text-align: center;
-	border-radius: 6px;
-	z-index: 1;
-	pointer-events: none;
+	height: 24px;
+}
+/* bar chart - fingerprint */
+
+.axis {
+  font: 10px sans-serif;
+}
+.bar {
+  fill: steelblue;
 }
 
+.bar:hover {
+  fill: darkblue;
+}
+.tooltip_bar {
+         width: 70px;
+         height: 12px;
+}
+.tooltip_posneg {
+         width: 160px;
+         height: 56px;
+}
+.tooltip {
+         position: absolute;
+         background-color: black;
+         pointer-events: none;
+	 font-size: 9px;
+         color: #ffffff;
+         text-align: center;
+         border-radius: 5px;
+	 padding: 3px;
+         z-index: 1;
+}
+
+.subbar rect:hover {
+  /*fill: orangered !important;*/
+  stroke: #000;
+}

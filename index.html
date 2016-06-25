@@ -7,6 +7,7 @@
 
 <head><link rel="stylesheet" type="text/css" href="main.css"></head>
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<!-- <script src="/home/gagarin/opt/d3js/d3.min.js" charset="utf&#45;8"></script> -->
 
 
 <body>
@@ -22,14 +23,19 @@
 
 	</div>
 	<div>
-		<div class="plot font">
-			<a href="bar_chart.html">Fingerprints</a>
+		<div class="fingerprint plot font">
+			<!-- <a href="bar_chart.html">Fingerprints</a> -->
 		</div>
-		<div class="plot font">
-			<p><a href="tp3.html">TP3</a></p>
+		<div class="posneg plot font">
+			<!-- <p><a href="tp3.html">TP3</a></p> -->
 		</div>
 	</div>
 </div>
 <script src="main.js" charset="utf-8"></script>
+<script type="text/javascript">
+	plot_scatter("div.scatter");
+	plot_fingerprint("div.fingerprint");
+	plot_posneg("div.posneg");
+</script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 function capFirstChar(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -78,132 +77,453 @@ function handle_scatter_data(data) {
 
 /* Scatter plot */
 var scatter = {}
-scatter.margin = {top: 20, right: 20, bottom: 30, left: 40};
-scatter.width = 960 - scatter.margin.left - scatter.margin.right;
-scatter.height = 500 - scatter.margin.top - scatter.margin.bottom;
+function plot_scatter(local) {
+	scatter.margin = {top: 20, right: 20, bottom: 30, left: 40};
+	scatter.width = 800 - scatter.margin.left - scatter.margin.right;
+	scatter.height = 400 - scatter.margin.top - scatter.margin.bottom;
 
-/*
- * value accessor - returns the value to encode for a given data object.
- * scale - maps value to a visual display encoding, such as a pixel position.
- * map function - maps from data value to display value
- * axis - sets up axis
- */
-// setup x
-scatter.xValue = function(d) { return d.x;}; // data -> value
-scatter.xScale = d3.scale.linear().range([0, scatter.width]); // value -> display
-scatter.xMap = function(d) { return scatter.xScale(scatter.xValue(d));}; // data -> display
-scatter.xAxis = d3.svg.axis().scale(scatter.xScale).orient("bottom");
+	/*
+	 * value accessor - returns the value to encode for a given data object.
+	 * scale - maps value to a visual display encoding, such as a pixel position.
+	 * map function - maps from data value to display value
+	 * axis - sets up axis
+	 */
+	// setup x
+	scatter.xValue = function(d) { return d.x;}; // data -> value
+	scatter.xScale = d3.scale.linear().range([0, scatter.width]); // value -> display
+	scatter.xMap = function(d) { return scatter.xScale(scatter.xValue(d));}; // data -> display
+	scatter.xAxis = d3.svg.axis().scale(scatter.xScale).orient("bottom");
 
-// setup y
-scatter.yValue = function(d) { return d.y;}; // data -> value
-    scatter.yScale = d3.scale.linear().range([scatter.height, 0]); // value -> display
-    scatter.yMap = function(d) { return scatter.yScale(scatter.yValue(d));}; // data -> display
-    scatter.yAxis = d3.svg.axis().scale(scatter.yScale).orient("left");
+	// setup y
+	scatter.yValue = function(d) { return d.y;}; // data -> value
+	    scatter.yScale = d3.scale.linear().range([scatter.height, 0]); // value -> display
+	    scatter.yMap = function(d) { return scatter.yScale(scatter.yValue(d));}; // data -> display
+	    scatter.yAxis = d3.svg.axis().scale(scatter.yScale).orient("left");
 
-// setup fill color
-scatter.cValue = function(d) { return d.epoch ;},
-    scatter.color = d3.scale.category10();
+	// setup fill color
+	scatter.cValue = function(d) { return d.epoch ;},
+	    scatter.color = d3.scale.category10();
 
-// add the graph canvas to the body of the webpage
-scatter.svg = d3.select("div.scatter").append("svg")
-    .attr("width", scatter.width + scatter.margin.left + scatter.margin.right)
-    .attr("height", scatter.height + scatter.margin.top + scatter.margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + scatter.margin.left + "," + scatter.margin.top + ")");
+	// add the graph canvas to the body of the webpage
+	scatter.svg = d3.select(local).append("svg")
+	    .attr("width", scatter.width + scatter.margin.left + scatter.margin.right)
+	    .attr("height", scatter.height + scatter.margin.top + scatter.margin.bottom)
+	  .append("g")
+	    .attr("transform", "translate(" + scatter.margin.left + "," + scatter.margin.top + ")");
 
-// add the tooltip area to the webpage
-scatter.tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip_scatter")
-    .style("opacity", 0);
+	// add the tooltip area to the webpage
+	scatter.tooltip = d3.select("body").append("div")
+	    .attr("class", "tooltip tooltip_scatter")
+	    .style("opacity", 0);
 
-// load data
-d3.csv("scatter_data.csv", function(error, data) {
-	handle_scatter_data(data);
-  // change string (from CSV) into number format
-  // scatter.x_max = d3.max(data, scatter.xValue);
-  // scatter.x_min = d3.min(data, scatter.xValue);
-  // scatter.y_max = d3.max(data, scatter.yValue);
-  // scatter.y_min = d3.min(data, scatter.yValue);
+	// load data
+	d3.csv("scatter_data.csv", function(error, data) {
+		handle_scatter_data(data);
+	  // change string (from CSV) into number format
+	  // scatter.x_max = d3.max(data, scatter.xValue);
+	  // scatter.x_min = d3.min(data, scatter.xValue);
+	  // scatter.y_max = d3.max(data, scatter.yValue);
+	  // scatter.y_min = d3.min(data, scatter.yValue);
 
-  scatter.margin_svg = 5;
-  // don't want dots overlapping axis, so add in buffer to data domain
-  scatter.xScale.domain([d3.min(data, scatter.xValue)-scatter.margin_svg, d3.max(data, scatter.xValue)+scatter.margin_svg]);
-  scatter.yScale.domain([d3.min(data, scatter.yValue)-scatter.margin_svg, d3.max(data, scatter.yValue)+scatter.margin_svg]);
+	  scatter.margin_svg = 5;
+	  // don't want dots overlapping axis, so add in buffer to data domain
+	  scatter.xScale.domain([d3.min(data, scatter.xValue)-scatter.margin_svg, d3.max(data, scatter.xValue)+scatter.margin_svg]);
+	  scatter.yScale.domain([d3.min(data, scatter.yValue)-scatter.margin_svg, d3.max(data, scatter.yValue)+scatter.margin_svg]);
 
-  // x-axis
-  scatter.svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + scatter.height + ")")
-      .call(scatter.xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", scatter.width)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("x");
+	  // x-axis
+	  scatter.svg.append("g")
+	      .attr("class", "x axis")
+	      .attr("transform", "translate(0," + scatter.height + ")")
+	      .call(scatter.xAxis)
+	    .append("text")
+	      .attr("class", "label")
+	      .attr("x", scatter.width)
+	      .attr("y", -6)
+	      .style("text-anchor", "end")
+	      .text("x");
 
 
-  // y-axis
-  scatter.svg.append("g")
-      .attr("class", "y axis")
-      .call(scatter.yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("y");
+	  // y-axis
+	  scatter.svg.append("g")
+	      .attr("class", "y axis")
+	      .call(scatter.yAxis)
+	    .append("text")
+	      .attr("class", "label")
+	      .attr("transform", "rotate(-90)")
+	      .attr("y", 6)
+	      .attr("dy", ".71em")
+	      .style("text-anchor", "end")
+	      .text("y");
 
-  // draw dots
-  scatter.svg.selectAll(".dot")
-      .data(data)
-    .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 3.5)
-      .attr("cx", scatter.xMap)
-      .attr("cy", scatter.yMap)
-      .style("fill", function(d) { return scatter.color(scatter.cValue(d));})
-      .on("mouseover", function(d) {
-          scatter.tooltip.transition()
-               .duration(200)
-               .style("opacity", .9);
-          scatter.tooltip.html(d.author + "<br/> Epoch: " + d.epoch)
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
-      })
-      .on("mouseout", function(d) {
-          scatter.tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
-      });
+	  // draw dots
+	  scatter.svg.selectAll(".dot")
+	      .data(data)
+	    .enter().append("circle")
+	      .attr("class", "dot")
+	      .attr("r", 3.5)
+	      .attr("cx", scatter.xMap)
+	      .attr("cy", scatter.yMap)
+	      .style("fill", function(d) { return scatter.color(scatter.cValue(d));})
+	      .on("mouseover", function(d) {
+		  scatter.tooltip.transition()
+		       .duration(200)
+		       .style("opacity", .9);
+		  scatter.tooltip.html(d.author + "<br/> Epoch: " + d.epoch)
+		       .style("left", (d3.event.pageX + 5) + "px")
+		       .style("top", (d3.event.pageY - 28) + "px");
+	      })
+	      .on("mouseout", function(d) {
+		  scatter.tooltip.transition()
+		       .duration(500)
+		       .style("opacity", 0);
+	      });
 
-  // d3.selectAll("p")
-	//   .data([scatter.x_min,scatter.x_max,scatter.y_min,scatter.y_max])
-	//   .enter()
-	//   .append("p")
-	//   .text(function(d) { return d;})
-	//   .exit();
+	  // d3.selectAll("p")
+		//   .data([scatter.x_min,scatter.x_max,scatter.y_min,scatter.y_max])
+		//   .enter()
+		//   .append("p")
+		//   .text(function(d) { return d;})
+		//   .exit();
 
-  //draw legend
-  scatter.legend = scatter.svg.selectAll(".legend")
-      .data(scatter.color.domain())
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+	  //draw legend
+	  scatter.legend = scatter.svg.selectAll(".legend")
+	      .data(scatter.color.domain())
+	    .enter().append("g")
+	      .attr("class", "legend")
+	      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-  // draw legend colored rectangles
-  scatter.legend.append("rect")
-      .attr("x", scatter.width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", scatter.color);
+	  // draw legend colored rectangles
+	  scatter.legend.append("rect")
+	      .attr("x", scatter.width - 18)
+	      .attr("width", 18)
+	      .attr("height", 18)
+	      .style("fill", scatter.color);
 
-  // draw legend text
-  scatter.legend.append("text")
-      .attr("x", scatter.width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d;})
-});
+	  // draw legend text
+	  scatter.legend.append("text")
+	      .attr("x", scatter.width - 24)
+	      .attr("y", 9)
+	      .attr("dy", ".35em")
+	      .style("text-anchor", "end")
+	      .text(function(d) { return d;})
+	});
+}
+
+
+/* Fingerprint bar chart */
+var fingerprint = {}
+function plot_fingerprint(local) {
+	// var margin = {top: 20, right: 20, bottom: 70, left: 40},
+	//     width = 600 - margin.left - margin.right,
+	//     height = 300 - margin.top - margin.bottom;
+	fingerprint.margin = {top: 20, right: 20, bottom: 20, left: 30};
+	fingerprint.width = 500 - fingerprint.margin.left - fingerprint.margin.right;
+	fingerprint.height = 250 - fingerprint.margin.top - fingerprint.margin.bottom;
+
+	fingerprint.xScale = d3.scale.ordinal().rangeBands([0, fingerprint.width], .1);
+
+	fingerprint.yScale = d3.scale.linear().range([fingerprint.height, 0]);
+
+	fingerprint.xAxis = d3.svg.axis()
+	    .scale(fingerprint.xScale)
+	    .orient("bottom")
+	    // .tickFormat(d3.time.format("%Y-%m"));
+	    .ticks(10)
+	    .tickFormat(function(d) { return ""; });
+
+	fingerprint.yAxis = d3.svg.axis()
+	    .scale(fingerprint.yScale)
+	    .orient("left")
+	    .ticks(10);
+
+	fingerprint.svg = d3.select(local).append("svg")
+	    .attr("width", fingerprint.width + fingerprint.margin.left + fingerprint.margin.right)
+	    .attr("height", fingerprint.height + fingerprint.margin.top + fingerprint.margin.bottom)
+	  .append("g")
+	    .attr("transform", 
+		  "translate(" + fingerprint.margin.left + "," + fingerprint.margin.top + ")");
+
+	// d3.csv("bar-data.csv", function(error, data) {
+	d3.csv("scatter_data.csv", function(error, data) {
+
+	    // data.forEach(function(d) {
+	    //     d.date = parseDate(d.date);
+	    //     d.value = +d.value;
+	    // });
+	    // data.forEach(handle_scatter_data)
+		handle_scatter_data(data);
+		// console.log(data);
+		author = data[0];
+		epoch = author.epoch;
+		// X = Object.keys(data);
+		delete author.epoch;
+		nome = author.author;
+		delete author.author;
+		delete author.x;
+		delete author.y;
+
+		fingerprint.svg.append("text")
+			.attr("x", (fingerprint.width / 2))             
+			.attr("y", 0 - (fingerprint.margin.top / 2))
+			.attr("text-anchor", "middle")  
+			.style("font-size", "12px") 
+			// .style("text-decoration", "underline")  
+			.text(nome);
+
+		features_name = Object.keys(author);
+		features_value = Object.values(author);
+		min_feature = d3.min(features_value);
+		max_feature = d3.max(features_value);
+		
+		fingerprint.xScale.domain(features_name);
+		fingerprint.yScale.domain([min_feature, max_feature]);
+		// eixo X
+		fingerprint.svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + fingerprint.height + ")")
+			.call(fingerprint.xAxis)
+			// .selectAll("text")
+			// .style("text-anchor", "end")
+			// .attr("dx", "-.8em")
+			// .attr("dy", "-.55em")
+			// .attr("transform", "rotate(-90)" );
+
+		// eixo Y
+		fingerprint.svg.append("g")
+			.attr("class", "y axis")
+			.call(fingerprint.yAxis);
+			// .append("text")
+			// .attr("transform", "rotate(-90)")
+			// .attr("y", 6)
+			// .attr("dy", ".71em")
+			// .style("text-anchor", "end")
+			// .text("Value");
+
+		fingerprint.features = [];
+		for (i = 0; i < features_name.length; i++) { 
+			fingerprint.features[i] = {};
+			fingerprint.features[i].name = features_name[i];
+			fingerprint.features[i].value = features_value[i];
+		}
+
+
+	// add the tooltip area to the webpage
+		fingerprint.tooltip = d3.select("body").append("div")
+		    .attr("class", "tooltip tooltip_bar")
+		    .style("opacity", 0);
+
+		//barras
+		// console.log(fingerprint.features);
+		fingerprint.svg.selectAll("bar")
+			.data(fingerprint.features)
+			.enter().append("rect")
+			.attr("class", "bar")
+			// .style("fill", "steelblue")
+			.attr("x", function(d) { return fingerprint.xScale(d.name); })
+			.attr("width", fingerprint.xScale.rangeBand())
+			.attr("y", function(d) { return fingerprint.yScale(d.value); })
+			.attr("height", function(d) { return fingerprint.height - fingerprint.yScale(d.value); })
+			.on("mouseover", function(d) {
+			   fingerprint.tooltip.transition()
+			       .duration(200)
+				.style("opacity", .9);
+			   fingerprint.tooltip.html(d.name)
+				.style("left", (d3.event.pageX + 5) + "px")
+				.style("top", (d3.event.pageY - 28) + "px");
+			})
+			.on("mouseout", function(d) {
+			   fingerprint.tooltip.transition()
+				.duration(500)
+				.style("opacity", 0);
+			});
+		});
+}
+
+function plot_posneg(local) {
+	// var margin = {top: 50, right: 20, bottom: 10, left: 200},
+	//     width = 800 - margin.left - margin.right,
+	//     height = 400 - margin.top - margin.bottom;
+	var margin = {top: 50, right: 60, bottom: 10, left:150},
+	    width = 500 - margin.left - margin.right,
+	    height = 300 - margin.top - margin.bottom;
+
+	var y = d3.scale.ordinal()
+	    .rangeRoundBands([0, height], .3);
+
+	var x = d3.scale.linear()
+	    .rangeRound([0, width]);
+
+	var color = d3.scale.ordinal()
+	    .range(["#c7001e", "#f6a580",  "#92c6db", "#086fad"]);
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("top");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left")
+
+	var svg = d3.select(local).append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	    .attr("id", "d3-plot")
+	  .append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	  color.domain(["Sadness", "Negative",  "Positive", "Joy"]);
+
+	  // d3.csv("https://raw.githubusercontent.com/maraujo/leafless/master/visu4.csv", function(error, data) {
+	 d3.csv("visu4.csv", function(error, data)  {
+
+	  data.forEach(function(d) {
+	    // calc percentages
+	    d["Sadness"] = +d["sadness"]*100/(d.N - d["neutral"]);
+	    d["Negative"] = +d["negative"]*100/(d.N - d["neutral"]);
+	    // d["Neutral"] = +d["neutral"]*100/d.N;
+	    d["Positive"] = +d["positive"]*100/(d.N - d["neutral"]);
+	    d["Joy"] = +d["joy"]*100/(d.N - d["neutral"]);
+	    var x0 = -1*( d["Negative"] + d["Sadness"]);
+	    var idx = 0;
+	    d.boxes = color.domain().map(function(name) { return {
+	      joy: d.joy,
+	      sadness: d.sadness,
+	      positive: d.positive,
+	      positive: d.positive,
+	      negative: d.negative,
+	      author: d.author,
+	      name: name,
+	      x0: x0,
+	      x1: x0 += +d[name],
+	      N: +d.N- d["neutral"],
+	      n: +d[idx += 1]
+	    }; });
+	  });
+
+	  var min_val = d3.min(data, function(d) {
+		  return d.boxes["0"].x0;
+		  });
+
+	  var max_val = d3.max(data, function(d) {
+		  return d.boxes["3"].x1;
+		  });
+
+	  x.domain([min_val, max_val]).nice();
+	  y.domain(data.map(function(d) { return d.author; }));
+
+
+	var tooltip = d3.select("body").append("div")
+	    .attr("class", "tooltip tooltip_posneg")
+	    .style("opacity", 0);
+
+
+
+	  svg.append("g")
+	      .attr("class", "x axis")
+	      .call(xAxis);
+
+	  svg.append("g")
+	      .attr("class", "y axis")
+	      .call(yAxis)
+
+	  var vakken = svg.selectAll(".question")
+	      .data(data)
+	    .enter().append("g")
+	      .attr("class", "bar")
+	      .attr("transform", function(d) { return "translate(0," + y(d.author) + ")"; });
+
+	  var bars = vakken.selectAll("rect")
+		.data(function(d) { return d.boxes; })
+		.enter()
+		.append("g")
+		// .attr("class", "subbar")
+		.on("mouseover", function(d) {
+		   tooltip.transition()
+		       .duration(200)
+			.style("opacity", .9);
+		   tooltip.html("Authors: " + d.author + "<br>"
+				+ "Joy: " + d.joy + "<br>"
+				+ "Positive: " +  d.positive + "<br>"
+				+ "Negative: " + d.negative + "<br>"
+				+ "Sadness: " + d.sadness)
+			.style("left", (d3.event.pageX + 5) + "px")
+			.style("top", (d3.event.pageY - 28) + "px");
+		})
+		.on("mouseout", function(d) {
+		   tooltip.transition()
+			.duration(500)
+			.style("opacity", 0);
+		});
+	    // .on('mouseover', tip.show)
+	    // .on('mouseout', tip.hide)
+	    //   ;
+
+	  bars.append("rect")
+	      .attr("height", y.rangeBand())
+	      .attr("x", function(d) { return x(d.x0); })
+	      .attr("width", function(d) { return x(d.x1) - x(d.x0); })
+	      .style("fill", function(d) { return color(d.name); });
+
+	  bars.append("text")
+	      .attr("x", function(d) { return x(d.x0); })
+	      .attr("y", y.rangeBand()/2)
+	      .attr("dy", "0.5em")
+	      .attr("dx", "0.5em")
+	      .style("font" ,"10px sans-serif")
+	      .style("text-anchor", "start")
+	      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
+
+	  vakken.insert("rect",":first-child")
+	      .attr("height", y.rangeBand())
+	      .attr("x", "1")
+	      .attr("width", width)
+	      .attr("fill-opacity", "0.5")
+	      .style("fill", "#F5F5F5")
+	      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+
+	  svg.append("g")
+	      .attr("class", "y axis")
+	  .append("line")
+	      .attr("x1", x(0))
+	      .attr("x2", x(0))
+	      .attr("y2", height);
+
+	  var startp = svg.append("g").attr("class", "legendbox").attr("id", "mylegendbox");
+	  // this is not nice, we should calculate the bounding box and use that
+	  var legend_tabs = [0, 120, 200, 375, 450];
+	  var legend = startp.selectAll(".legend")
+	      .data(color.domain().slice())
+	    .enter().append("g")
+	      .attr("class", "legend")
+	      .attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
+
+	  legend.append("rect")
+	      .attr("x", 0)
+	      .attr("width", 18)
+	      .attr("height", 18)
+	      .style("fill", color);
+
+	  legend.append("text")
+	      .attr("x", 22)
+	      .attr("y", 9)
+	      .attr("dy", ".35em")
+	      .style("text-anchor", "start")
+	      .style("font" ,"10px sans-serif")
+	      .text(function(d) { return d; });
+
+	  d3.selectAll(".axis path")
+	      .style("fill", "none")
+	      .style("stroke", "#000")
+	      .style("shape-rendering", "crispEdges")
+
+	  d3.selectAll(".axis line")
+	      .style("fill", "none")
+	      .style("stroke", "#000")
+	      .style("shape-rendering", "crispEdges")
+
+
+
+	  var movesize = width/2 - startp.node().getBBox().width/2;
+	  d3.selectAll(".legendbox").attr("transform", "translate(" + movesize  + ",0)");
+	});
+}
