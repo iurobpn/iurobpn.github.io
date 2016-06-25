@@ -1,3 +1,7 @@
+var fingerprint = {}
+var scatter = {}
+var posneg = {}
+
 function capFirstChar(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -76,8 +80,7 @@ function handle_scatter_data(data) {
 
 
 /* Scatter plot */
-var scatter = {}
-function plot_scatter(local) {
+function pre_scatter(local) {
 	scatter.margin = {top: 20, right: 20, bottom: 30, left: 40};
 	scatter.width = 800 - scatter.margin.left - scatter.margin.right;
 	scatter.height = 400 - scatter.margin.top - scatter.margin.bottom;
@@ -115,10 +118,12 @@ function plot_scatter(local) {
 	scatter.tooltip = d3.select("body").append("div")
 	    .attr("class", "tooltip tooltip_scatter")
 	    .style("opacity", 0);
+}
 
+
+
+function plot_scatter(data) {
 	// load data
-	d3.csv("scatter_data.csv", function(error, data) {
-		handle_scatter_data(data);
 	  // change string (from CSV) into number format
 	  // scatter.x_max = d3.max(data, scatter.xValue);
 	  // scatter.x_min = d3.min(data, scatter.xValue);
@@ -206,13 +211,10 @@ function plot_scatter(local) {
 	      .attr("dy", ".35em")
 	      .style("text-anchor", "end")
 	      .text(function(d) { return d;})
-	});
+	// });
 }
 
-
-/* Fingerprint bar chart */
-var fingerprint = {}
-function plot_fingerprint(local) {
+function pre_fingerprint(local) {
 	// var margin = {top: 20, right: 20, bottom: 70, left: 40},
 	//     width = 600 - margin.left - margin.right,
 	//     height = 300 - margin.top - margin.bottom;
@@ -242,16 +244,24 @@ function plot_fingerprint(local) {
 	  .append("g")
 	    .attr("transform", 
 		  "translate(" + fingerprint.margin.left + "," + fingerprint.margin.top + ")");
+    
+	// add the tooltip area to the webpage
+	fingerprint.tooltip = d3.select("body").append("div")
+	    .attr("class", "tooltip tooltip_bar")
+	    .style("opacity", 0);
+}
 
-	// d3.csv("bar-data.csv", function(error, data) {
-	d3.csv("scatter_data.csv", function(error, data) {
+/* Fingerprint bar chart */
+function plot_fingerprint(data) {
+
+	// d3.csv("scatter_data.csv", function(error, data) {
 
 	    // data.forEach(function(d) {
 	    //     d.date = parseDate(d.date);
 	    //     d.value = +d.value;
 	    // });
 	    // data.forEach(handle_scatter_data)
-		handle_scatter_data(data);
+		// handle_scatter_data(data);
 		// console.log(data);
 		author = data[0];
 		epoch = author.epoch;
@@ -307,10 +317,6 @@ function plot_fingerprint(local) {
 		}
 
 
-	// add the tooltip area to the webpage
-		fingerprint.tooltip = d3.select("body").append("div")
-		    .attr("class", "tooltip tooltip_bar")
-		    .style("opacity", 0);
 
 		//barras
 		// console.log(fingerprint.features);
@@ -336,44 +342,46 @@ function plot_fingerprint(local) {
 				.duration(500)
 				.style("opacity", 0);
 			});
-		});
+		// });
 }
 
-function plot_posneg(local) {
+function pre_posneg(local) {
 	// var margin = {top: 50, right: 20, bottom: 10, left: 200},
 	//     width = 800 - margin.left - margin.right,
 	//     height = 400 - margin.top - margin.bottom;
-	var margin = {top: 50, right: 60, bottom: 10, left:150},
-	    width = 500 - margin.left - margin.right,
-	    height = 300 - margin.top - margin.bottom;
+	posneg.margin = {top: 50, right: 60, bottom: 10, left:150};
+	posneg.width = 500 - posneg.margin.left - posneg.margin.right;
+	posneg.height = 300 - posneg.margin.top - posneg.margin.bottom;
 
-	var y = d3.scale.ordinal()
-	    .rangeRoundBands([0, height], .3);
+	posneg.yScale = d3.scale.ordinal()
+	    .rangeRoundBands([0, posneg.height], .3);
 
-	var x = d3.scale.linear()
-	    .rangeRound([0, width]);
+	posneg.xScale = d3.scale.linear()
+	    .rangeRound([0, posneg.width]);
 
-	var color = d3.scale.ordinal()
+	posneg.color = d3.scale.ordinal()
 	    .range(["#c7001e", "#f6a580",  "#92c6db", "#086fad"]);
 
-	var xAxis = d3.svg.axis()
-	    .scale(x)
+	posneg.xAxis = d3.svg.axis()
+	    .scale(posneg.xScale)
 	    .orient("top");
 
-	var yAxis = d3.svg.axis()
-	    .scale(y)
+	posneg.yAxis = d3.svg.axis()
+	    .scale(posneg.yScale)
 	    .orient("left")
 
-	var svg = d3.select(local).append("svg")
-	    .attr("width", width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom)
+	posneg.svg = d3.select(local).append("svg")
+	    .attr("width", posneg.width + posneg.margin.left + posneg.margin.right)
+	    .attr("height", posneg.height + posneg.margin.top + posneg.margin.bottom)
 	    .attr("id", "d3-plot")
 	  .append("g")
-	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	    .attr("transform", "translate(" + posneg.margin.left + "," + posneg.margin.top + ")");
 
-	  color.domain(["Sadness", "Negative",  "Positive", "Joy"]);
+	  posneg.color.domain(["Sadness", "Negative",  "Positive", "Joy"]);
+}
 
-	  // d3.csv("https://raw.githubusercontent.com/maraujo/leafless/master/visu4.csv", function(error, data) {
+function plot_posneg() {
+
 	 d3.csv("visu4.csv", function(error, data)  {
 
 	  data.forEach(function(d) {
@@ -385,7 +393,7 @@ function plot_posneg(local) {
 	    d["Joy"] = +d["joy"]*100/(d.N - d["neutral"]);
 	    var x0 = -1*( d["Negative"] + d["Sadness"]);
 	    var idx = 0;
-	    d.boxes = color.domain().map(function(name) { return {
+	    d.boxes = posneg.color.domain().map(function(name) { return {
 	      joy: d.joy,
 	      sadness: d.sadness,
 	      positive: d.positive,
@@ -408,40 +416,40 @@ function plot_posneg(local) {
 		  return d.boxes["3"].x1;
 		  });
 
-	  x.domain([min_val, max_val]).nice();
-	  y.domain(data.map(function(d) { return d.author; }));
+	  posneg.xScale.domain([min_val, max_val]).nice();
+	  posneg.yScale.domain(data.map(function(d) { return d.author; }));
 
 
-	var tooltip = d3.select("body").append("div")
+	posneg.tooltip = d3.select("body").append("div")
 	    .attr("class", "tooltip tooltip_posneg")
 	    .style("opacity", 0);
 
 
 
-	  svg.append("g")
+	  posneg.svg.append("g")
 	      .attr("class", "x axis")
-	      .call(xAxis);
+	      .call(posneg.xAxis);
 
-	  svg.append("g")
+	  posneg.svg.append("g")
 	      .attr("class", "y axis")
-	      .call(yAxis)
+	      .call(posneg.yAxis)
 
-	  var vakken = svg.selectAll(".question")
+	  posneg.vakken = posneg.svg.selectAll(".question")
 	      .data(data)
 	    .enter().append("g")
 	      .attr("class", "bar")
-	      .attr("transform", function(d) { return "translate(0," + y(d.author) + ")"; });
+	      .attr("transform", function(d) { return "translate(0," + posneg.yScale(d.author) + ")"; });
 
-	  var bars = vakken.selectAll("rect")
+	  posneg.bars = posneg.vakken.selectAll("rect")
 		.data(function(d) { return d.boxes; })
 		.enter()
 		.append("g")
 		// .attr("class", "subbar")
 		.on("mouseover", function(d) {
-		   tooltip.transition()
+		   posneg.tooltip.transition()
 		       .duration(200)
 			.style("opacity", .9);
-		   tooltip.html("Authors: " + d.author + "<br>"
+		   posneg.tooltip.html("Authors: " + d.author + "<br>"
 				+ "Joy: " + d.joy + "<br>"
 				+ "Positive: " +  d.positive + "<br>"
 				+ "Negative: " + d.negative + "<br>"
@@ -450,7 +458,7 @@ function plot_posneg(local) {
 			.style("top", (d3.event.pageY - 28) + "px");
 		})
 		.on("mouseout", function(d) {
-		   tooltip.transition()
+		   posneg.tooltip.transition()
 			.duration(500)
 			.style("opacity", 0);
 		});
@@ -458,52 +466,52 @@ function plot_posneg(local) {
 	    // .on('mouseout', tip.hide)
 	    //   ;
 
-	  bars.append("rect")
-	      .attr("height", y.rangeBand())
-	      .attr("x", function(d) { return x(d.x0); })
-	      .attr("width", function(d) { return x(d.x1) - x(d.x0); })
-	      .style("fill", function(d) { return color(d.name); });
+	  posneg.bars.append("rect")
+	      .attr("height", posneg.yScale.rangeBand())
+	      .attr("x", function(d) { return posneg.xScale(d.x0); })
+	      .attr("width", function(d) { return posneg.xScale(d.x1) - posneg.xScale(d.x0); })
+	      .style("fill", function(d) { return posneg.color(d.name); });
 
-	  bars.append("text")
-	      .attr("x", function(d) { return x(d.x0); })
-	      .attr("y", y.rangeBand()/2)
+	  posneg.bars.append("text")
+	      .attr("x", function(d) { return posneg.xScale(d.x0); })
+	      .attr("y", posneg.yScale.rangeBand()/2)
 	      .attr("dy", "0.5em")
 	      .attr("dx", "0.5em")
 	      .style("font" ,"10px sans-serif")
 	      .style("text-anchor", "start")
 	      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
 
-	  vakken.insert("rect",":first-child")
-	      .attr("height", y.rangeBand())
+	  posneg.vakken.insert("rect",":first-child")
+	      .attr("height", posneg.yScale.rangeBand())
 	      .attr("x", "1")
-	      .attr("width", width)
+	      .attr("width", posneg.width)
 	      .attr("fill-opacity", "0.5")
 	      .style("fill", "#F5F5F5")
 	      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
 
-	  svg.append("g")
+	  posneg.svg.append("g")
 	      .attr("class", "y axis")
 	  .append("line")
-	      .attr("x1", x(0))
-	      .attr("x2", x(0))
-	      .attr("y2", height);
+	      .attr("x1", posneg.xScale(0))
+	      .attr("x2", posneg.xScale(0))
+	      .attr("y2", posneg.height);
 
-	  var startp = svg.append("g").attr("class", "legendbox").attr("id", "mylegendbox");
+	  var startp = posneg.svg.append("g").attr("class", "legendbox").attr("id", "mylegendbox");
 	  // this is not nice, we should calculate the bounding box and use that
 	  var legend_tabs = [0, 120, 200, 375, 450];
-	  var legend = startp.selectAll(".legend")
-	      .data(color.domain().slice())
+	  posneg.legend = startp.selectAll(".legend")
+	      .data(posneg.color.domain().slice())
 	    .enter().append("g")
 	      .attr("class", "legend")
 	      .attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
 
-	  legend.append("rect")
+	  posneg.legend.append("rect")
 	      .attr("x", 0)
 	      .attr("width", 18)
 	      .attr("height", 18)
-	      .style("fill", color);
+	      .style("fill", posneg.color);
 
-	  legend.append("text")
+	  posneg.legend.append("text")
 	      .attr("x", 22)
 	      .attr("y", 9)
 	      .attr("dy", ".35em")
@@ -523,7 +531,20 @@ function plot_posneg(local) {
 
 
 
-	  var movesize = width/2 - startp.node().getBBox().width/2;
+	  var movesize = posneg.width/2 - startp.node().getBBox().width/2;
 	  d3.selectAll(".legendbox").attr("transform", "translate(" + movesize  + ",0)");
 	});
 }
+
+function plot(local_scatter,local_fingerprint,local_posneg) {
+	pre_scatter(local_scatter);
+	pre_fingerprint(local_fingerprint);
+	pre_posneg(local_posneg);
+	d3.csv("scatter_data.csv", function(error, data) {
+		handle_scatter_data(data);
+		plot_scatter(data);
+		plot_fingerprint(data);
+	});
+	plot_posneg();
+}
+
