@@ -5,46 +5,11 @@
 <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
 <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
 
+<head><link rel="stylesheet" type="text/css" href="main.css"></head>
 <style>
-body {
-  font: 11px sans-serif;
+body{
+	background-color: white;
 }
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.dot {
-  stroke: #000;
-}
-
-.tooltip {
-	position: absolute;
-	width: 140px;
-	height: 28px;
-	background-color: black;
-	/* border-radius: 5px; */
-	pointer-events: none;
-
-	/* position: relative; */
-	/* display: inline-block; */
-	/* border-bottom: 1px dotted black; */
-	/* visibility: hidden; */
-	/* width: 120px; */
-	/* background-color: black; */
-	color: #fff;
-	text-align: center;
-	border-radius: 6px;
-	/* padding: 5px 0; */
-	z-index: 1;
-	/*  bottom: 150%;  */
-	/* left: 50%;  */
-	/*  margin-left: 60px; */
-}
-
 </style>
 <body>
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -89,7 +54,7 @@ var svg = d3.select("body").append("svg")
 
 // add the tooltip area to the webpage
 var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
+    .attr("class", "tooltip_scatter")
     .style("opacity", 0);
 
 // load data
