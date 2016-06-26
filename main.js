@@ -1,6 +1,7 @@
 var fingerprint = {}
 var scatter = {}
 var posneg = {}
+var dict = {}
 
 function capFirstChar(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
@@ -121,15 +122,8 @@ function pre_scatter(local) {
 }
 
 
-
 function plot_scatter(data) {
 	// load data
-	  // change string (from CSV) into number format
-	  // scatter.x_max = d3.max(data, scatter.xValue);
-	  // scatter.x_min = d3.min(data, scatter.xValue);
-	  // scatter.y_max = d3.max(data, scatter.yValue);
-	  // scatter.y_min = d3.min(data, scatter.yValue);
-
 	  scatter.margin_svg = 5;
 	  // don't want dots overlapping axis, so add in buffer to data domain
 	  scatter.xScale.domain([d3.min(data, scatter.xValue)-scatter.margin_svg, d3.max(data, scatter.xValue)+scatter.margin_svg]);
@@ -169,26 +163,25 @@ function plot_scatter(data) {
 	      .attr("cx", scatter.xMap)
 	      .attr("cy", scatter.yMap)
 	      .style("fill", function(d) { return scatter.color(scatter.cValue(d));})
-	      .on("mouseover", function(d) {
-		  scatter.tooltip.transition()
-		       .duration(200)
-		       .style("opacity", .9);
-		  scatter.tooltip.html(d.author + "<br/> Epoch: " + d.epoch)
-		       .style("left", (d3.event.pageX + 5) + "px")
-		       .style("top", (d3.event.pageY - 28) + "px");
-	      })
-	      .on("mouseout", function(d) {
-		  scatter.tooltip.transition()
-		       .duration(500)
-		       .style("opacity", 0);
-	      });
-
-	  // d3.selectAll("p")
-		//   .data([scatter.x_min,scatter.x_max,scatter.y_min,scatter.y_max])
-		//   .enter()
-		//   .append("p")
-		//   .text(function(d) { return d;})
-		//   .exit();
+		.on("mouseover", function(d) {
+			scatter.tooltip.transition()
+				.duration(200)
+				.style("opacity", .9);
+			scatter.tooltip.html(d.author + "<br/> Epoch: " + d.epoch)
+				.style("left", (d3.event.pageX + 5) + "px")
+				.style("top", (d3.event.pageY - 28) + "px");
+		})
+		.on("mouseout", function(d) {
+			scatter.tooltip.transition()
+			.duration(500)
+			.style("opacity", 0);
+		})
+		.on("click", function(d){
+				// Determine if current line is visible
+				author = dict[d.author];
+				update_fingerprint(author);
+		});
+				
 
 	  //draw legend
 	  scatter.legend = scatter.svg.selectAll(".legend")
@@ -249,100 +242,187 @@ function pre_fingerprint(local) {
 	fingerprint.tooltip = d3.select("body").append("div")
 	    .attr("class", "tooltip tooltip_bar")
 	    .style("opacity", 0);
+
+}
+
+function update_fingerprint(author) {
+	epoch = author.epoch;
+	// X = Object.keys(data);
+	delete author.epoch;
+	nome = author.author;
+	delete author.author;
+	delete author.x;
+	delete author.y;
+	fingerprint.svg.select("text.label_fingerprint").text(nome);
+
+	features_name = Object.keys(author);
+	features_value = Object.values(author);
+	min_feature = d3.min(features_value);
+	max_feature = d3.max(features_value);
+	
+	fingerprint.xScale.domain(features_name);
+	fingerprint.yScale.domain([min_feature, max_feature]);
+	// eixo X
+	fingerprint.svg.select(".x.axis")
+		.transition().duration(300)
+		.call(fingerprint.xAxis)
+		// .selectAll("text")
+		// .style("text-anchor", "end")
+		// .attr("dx", "-.8em")
+		// .attr("dy", "-.55em")
+		// .attr("transform", "rotate(-90)" );
+
+	// eixo Y
+	fingerprint.svg.select(".y.axis")
+		.transition().duration(300)
+		.call(fingerprint.yAxis);
+		// .append("text")
+		// .attr("transform", "rotate(-90)")
+		// .attr("y", 6)
+		// .attr("dy", ".71em")
+		// .style("text-anchor", "end")
+		// .text("Value");
+
+	fingerprint.features = [];
+	for (i = 0; i < features_name.length; i++) { 
+		fingerprint.features[i] = {};
+		fingerprint.features[i].name = features_name[i];
+		fingerprint.features[i].value = features_value[i];
+	}
+
+
+	// THIS IS THE ACTUAL WORK!
+	var bars = fingerprint.svg.selectAll(".bar").data(fingerprint.features) // (data) is an array/iterable thing, second argument is an ID generator function
+
+	bars.exit()
+	.transition()
+	.duration(300)
+	.attr("y", fingerprint.yScale(0))
+	// .attr("height", height - y(0))
+	.style('fill-opacity', 1e-6)
+	.remove();
+
+	// data that needs DOM = enter() (a set/selection, not an event!)
+	bars.enter().append("rect")
+	.attr("class", "bar")
+	.attr("y", fingerprint.yScale(0));
+	// .attr("height", height - y(0));
+
+	// the "UPDATE" set:
+	bars.transition().duration(300)//.attr("x", function(d) { return fingerprint.xValue(d); }) 
+		.attr("x", function(d) { return fingerprint.xScale(d.name); })
+		.attr("width", fingerprint.xScale.rangeBand())
+		.attr("y", function(d) { return fingerprint.yScale(d.value); })
+		.attr("height", function(d) { return fingerprint.height - fingerprint.yScale(d.value); });
+	bars.on("mouseover", function(d) {
+		   fingerprint.tooltip.transition()
+		       .duration(200)
+			.style("opacity", .9);
+		   fingerprint.tooltip.html(d.name)
+			.style("left", (d3.event.pageX + 5) + "px")
+			.style("top", (d3.event.pageY - 28) + "px");
+		})
+		.on("mouseout", function(d) {
+		   fingerprint.tooltip.transition()
+			.duration(500)
+			.style("opacity", 0);
+		});
 }
 
 /* Fingerprint bar chart */
-function plot_fingerprint(data) {
+function plot_fingerprint(author) {
+	epoch = author.epoch;
+	// X = Object.keys(data);
+	delete author.epoch;
+	nome = author.author;
+	delete author.author;
+	delete author.x;
+	delete author.y;
+	// fingerprint.svg.select("label_fingerprint").text(nome);
+	fingerprint.svg
+		.append("text")
+		.attr("class","label_fingerprint")
+		.attr("x", fingerprint.width / 2) 
+		.attr("y", 0-(fingerprint.margin.top / 2))
+		.attr("text-anchor", "middle")  
+		.style("font-size", "12px") 
+		.text(nome);
 
-	// d3.csv("scatter_data.csv", function(error, data) {
+	features_name = Object.keys(author);
+	features_value = Object.values(author);
+	min_feature = d3.min(features_value);
+	max_feature = d3.max(features_value);
+	
+	fingerprint.xScale.domain(features_name);
+	fingerprint.yScale.domain([min_feature, max_feature]);
+	// eixo X
+	fingerprint.svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + fingerprint.height + ")")
+		.transition().duration(300)
+		.call(fingerprint.xAxis)
+		// .selectAll("text")
+		// .style("text-anchor", "end")
+		// .attr("dx", "-.8em")
+		// .attr("dy", "-.55em")
+		// .attr("transform", "rotate(-90)" );
 
-	    // data.forEach(function(d) {
-	    //     d.date = parseDate(d.date);
-	    //     d.value = +d.value;
-	    // });
-	    // data.forEach(handle_scatter_data)
-		// handle_scatter_data(data);
-		// console.log(data);
-		author = data[0];
-		epoch = author.epoch;
-		// X = Object.keys(data);
-		delete author.epoch;
-		nome = author.author;
-		delete author.author;
-		delete author.x;
-		delete author.y;
+	// eixo Y
+	fingerprint.svg.append("g")
+		.attr("class", "y axis")
+		.transition().duration(300)
+		.call(fingerprint.yAxis);
+		// .append("text")
+		// .attr("transform", "rotate(-90)")
+		// .attr("y", 6)
+		// .attr("dy", ".71em")
+		// .style("text-anchor", "end")
+		// .text("Value");
 
-		fingerprint.svg.append("text")
-			.attr("x", (fingerprint.width / 2))             
-			.attr("y", 0 - (fingerprint.margin.top / 2))
-			.attr("text-anchor", "middle")  
-			.style("font-size", "12px") 
-			// .style("text-decoration", "underline")  
-			.text(nome);
-
-		features_name = Object.keys(author);
-		features_value = Object.values(author);
-		min_feature = d3.min(features_value);
-		max_feature = d3.max(features_value);
-		
-		fingerprint.xScale.domain(features_name);
-		fingerprint.yScale.domain([min_feature, max_feature]);
-		// eixo X
-		fingerprint.svg.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + fingerprint.height + ")")
-			.call(fingerprint.xAxis)
-			// .selectAll("text")
-			// .style("text-anchor", "end")
-			// .attr("dx", "-.8em")
-			// .attr("dy", "-.55em")
-			// .attr("transform", "rotate(-90)" );
-
-		// eixo Y
-		fingerprint.svg.append("g")
-			.attr("class", "y axis")
-			.call(fingerprint.yAxis);
-			// .append("text")
-			// .attr("transform", "rotate(-90)")
-			// .attr("y", 6)
-			// .attr("dy", ".71em")
-			// .style("text-anchor", "end")
-			// .text("Value");
-
-		fingerprint.features = [];
-		for (i = 0; i < features_name.length; i++) { 
-			fingerprint.features[i] = {};
-			fingerprint.features[i].name = features_name[i];
-			fingerprint.features[i].value = features_value[i];
-		}
+	fingerprint.features = [];
+	for (i = 0; i < features_name.length; i++) { 
+		fingerprint.features[i] = {};
+		fingerprint.features[i].name = features_name[i];
+		fingerprint.features[i].value = features_value[i];
+	}
 
 
+	// THIS IS THE ACTUAL WORK!
+	var bars = fingerprint.svg.selectAll(".bar").data(fingerprint.features) // (data) is an array/iterable thing, second argument is an ID generator function
 
-		//barras
-		// console.log(fingerprint.features);
-		fingerprint.svg.selectAll("bar")
-			.data(fingerprint.features)
-			.enter().append("rect")
-			.attr("class", "bar")
-			// .style("fill", "steelblue")
-			.attr("x", function(d) { return fingerprint.xScale(d.name); })
-			.attr("width", fingerprint.xScale.rangeBand())
-			.attr("y", function(d) { return fingerprint.yScale(d.value); })
-			.attr("height", function(d) { return fingerprint.height - fingerprint.yScale(d.value); })
-			.on("mouseover", function(d) {
-			   fingerprint.tooltip.transition()
-			       .duration(200)
-				.style("opacity", .9);
-			   fingerprint.tooltip.html(d.name)
-				.style("left", (d3.event.pageX + 5) + "px")
-				.style("top", (d3.event.pageY - 28) + "px");
-			})
-			.on("mouseout", function(d) {
-			   fingerprint.tooltip.transition()
-				.duration(500)
-				.style("opacity", 0);
-			});
-		// });
+	bars.exit()
+	.transition()
+	.duration(300)
+	.attr("y", fingerprint.yScale(0))
+	// .attr("height", height - y(0))
+	.style('fill-opacity', 1e-6)
+	.remove();
+
+	// data that needs DOM = enter() (a set/selection, not an event!)
+	bars.enter().append("rect")
+	.attr("class", "bar")
+	.attr("y", fingerprint.yScale(0));
+	// .attr("height", height - y(0));
+
+	// the "UPDATE" set:
+	bars.transition().duration(300)//.attr("x", function(d) { return fingerprint.xValue(d); }) 
+		.attr("x", function(d) { return fingerprint.xScale(d.name); })
+		.attr("width", fingerprint.xScale.rangeBand())
+		.attr("y", function(d) { return fingerprint.yScale(d.value); })
+		.attr("height", function(d) { return fingerprint.height - fingerprint.yScale(d.value); });
+	bars.on("mouseover", function(d) {
+		   fingerprint.tooltip.transition()
+		       .duration(200)
+			.style("opacity", .9);
+		   fingerprint.tooltip.html(d.name)
+			.style("left", (d3.event.pageX + 5) + "px")
+			.style("top", (d3.event.pageY - 28) + "px");
+		})
+		.on("mouseout", function(d) {
+		   fingerprint.tooltip.transition()
+			.duration(500)
+			.style("opacity", 0);
+		});
 }
 
 function pre_posneg(local) {
@@ -542,8 +622,14 @@ function plot(local_scatter,local_fingerprint,local_posneg) {
 	pre_posneg(local_posneg);
 	d3.csv("scatter_data.csv", function(error, data) {
 		handle_scatter_data(data);
+		/* gerando o dicionarios de autores */		
+		data.forEach(function(author) {
+			/* name = author.author */
+			dict[author.author] = author
+		});
+
 		plot_scatter(data);
-		plot_fingerprint(data);
+		plot_fingerprint(data[0]);
 	});
 	plot_posneg();
 }
