@@ -2,6 +2,7 @@ var fingerprint = {}
 var scatter = {}
 var posneg = {}
 var dict = {}
+var authors = [];
 
 function capFirstChar(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
@@ -616,7 +617,7 @@ function plot_posneg() {
 	});
 }
 
-function plot(local_scatter,local_fingerprint,local_posneg) {
+function plot(local_scatter,local_fingerprint,local_posneg,local_authors) {
 	pre_scatter(local_scatter);
 	pre_fingerprint(local_fingerprint);
 	pre_posneg(local_posneg);
@@ -627,10 +628,37 @@ function plot(local_scatter,local_fingerprint,local_posneg) {
 			/* name = author.author */
 			dict[author.author] = author
 		});
-
+		authors = Object.keys(dict);
 		plot_scatter(data);
 		plot_fingerprint(data[0]);
+		plot_authors(local_authors,authors);
 	});
 	plot_posneg();
 }
 
+// var divs = new Object();
+function plot_authors(local,authors) {
+	// console.log(local)
+	// console.log(authors)
+	var divs = d3.select(local).selectAll(".author")
+		.data(authors)
+		.enter()
+		.append("div")
+		.attr("class","author");
+
+	// divs.html(function(d){return d;});
+	fun = function(d){return d;};
+	// divs.append("label")
+	// 	.attr("class","author")
+	// 	.html(function(d) {
+	// 		return '<input type="checkbox" name="author" value=' + 
+	// 			d + ">" + d;
+	// 	});
+
+	divs.append("input")
+		.attr("type","checkbox")
+		.attr("name","author")
+		.attr("value",fun);
+	divs.append("a").html(fun);
+	 // divs.append("a").html(fun);
+}

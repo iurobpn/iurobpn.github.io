@@ -29,17 +29,68 @@ div {
 	margin: auto;
 	width: 100%;
 	padding: 0;
+	height: 400px;
 
 	/* border-size: 1px; */
 	/* background-color: lightblue; */
 	text-align: center;
+}
+div.vspace {
+	height: 30px;
+}
+
+div.scatter {
+	position: relative;
+	display: inline-block;
+	width: 80%;
+	height: 100%;
+	font-size: 11px;
+	text-align: left;
+}
+
+div.authors {
+	position: relative;
+	display: inline-block;
+	width: 20%;
+	/* height: 100%; */
+	/* font-size: 11px; */
+/* width: 30em; */
+	overflow-y: auto;
+	white-space: nowrap;
+}
+div.author {
+	position: relative;
+	/* display: inline-block; */
+	height: auto;
+	/* height: 9px; */
+	font-size: 8px;
+	text-align: left;
+}
+input[type=checkbox] {
+	height: 1px;
+	position: relative;
+	display: inline-block;
+	width: 1px;	
+	margin-bottom: 0;
+	margin-top: 0;
+	padding-bottom: 0;
+	padding-top: 0;
+	vertical-align: middle;
+}
+
+.title_author {
+	position: relative;
+	height: auto;
+	padding: 3px;
+	/* text-align: center; */
 }
 
 div.plot {
 	position: relative;
 	display: inline-block;
 	width: 50%;
-	height: 100px;
+	height: 200px;
+	font-size: 11px;
 }
 
 div.main {
