@@ -247,6 +247,15 @@ function pre_fingerprint(local) {
 
 }
 
+function values(obj) {
+	v = [];
+	keys = Object.keys(obj);
+	for (i=0; i< keys.length; i++) {
+		v.push(obj[keys[i]]);
+	}
+	return v;
+}
+
 function update_fingerprint(author) {
 	data = {};
 	data.positive = author.positive;
@@ -322,7 +331,7 @@ function update_fingerprint(author) {
 	fingerprint.svg.select("text.label_fingerprint").text(nome);
 
 	features_name = Object.keys(data);
-	features_value = Object.values(data);
+	features_value = values(data);
 	var min_feature = d3.min(features_value);
 	var max_feature = d3.max(features_value);
 	
@@ -475,7 +484,7 @@ function plot_fingerprint(author) {
 		.text(nome);
 
 	features_name = Object.keys(data);
-	features_value = Object.values(data);
+	features_value = values(data);
 	min_feature = d3.min(features_value);
 	max_feature = d3.max(features_value);
 	
