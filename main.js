@@ -817,14 +817,13 @@ function plot(local_scatter,local_fingerprint,local_posneg,local_authors) {
 		authors = Object.keys(dict);
 		//plot_scatter(data);
 		plot_authors(local_authors,authors);
-		$('.authors').columnize({height:200,width : 200});
+		$('.authors').columnize({height:200, width : 200});
 		plot_posneg(data);
 	});
 
 	d3.csv("epoch_data.csv", function(error, data) {
 		handle_scatter_data(data);
 		plot_scatter(data);
-
 	});
 }
 
