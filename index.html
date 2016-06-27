@@ -1,35 +1,489 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-
+<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
 <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+<title>Assinatura Emocional de Autores em Obras Literárias</title>
+<head>
 
-<head><link rel="stylesheet" type="text/css" href="main.css"></head>
-<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="main.css">
+<script src="d3.v3.min.js" charset="utf-8"></script>
 <!-- <script src="/home/gagarin/opt/d3js/d3.min.js" charset="utf&#45;8"></script> -->
 
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
 
+<!-- Latest compiled and minified JavaScript -->
+    <script src="jquery-1.12.4.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="Columnizer-jQuery-Plugin-1.6.0/src/jquery.columnizer.js"></script>
+
+
+
+
+</head>
 <body>
+<div >
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><span style="color:white">Alunos:</span> Gustavo Caetano, Iuro Nascimento, Matheus Araújo</a>
+            </div>
+        </div>
+    </nav>
+    <div class="jumbotron" style="text-align: center">
+        <h1>Assinatura Emocional de Autores em Obras Literárias</h1>
+        <p>A partir da análise de 641 obras literárias de 56 autores conseguimos identificar seus traços emocionais únicos</p>
+        <img src="matheus_cinza.jpg" style="max-width: 170px"/>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Resumo do Trabalho</h2>
+                A internet mudou profundamente as formas de publicação de conteúdo. Grande parte do conteúdo é disponibilizado digitalmente, como Jornais, revistas e e-books. Com todos estes textos e metadados de livrosi, pode-se compor mecanismos mais elaborados para a recomendação de novos livros ou autores. A grande maioria dos trabalhos nesta área utilizam atributos derivados da sintaxe do texto, como verbos, adjetivos e stop words entre outrosi. A nossa proposta procura traçar uma assinatura emocional dos autores extraindo de seus textos somente atributos relacionados a fatores psicológicos como positividade, negatividade, medo, entre vários. Este trabalho propõe uma série de atributos psicométricos que foram selecionados de 2 léxicos de sentimentos e analisados em 641 obras de 56 autores da lingua inglesa.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5">
+                <h3>Identificação de Épocas Literárias</h3>
+                <div>
+                    Ao longo deste trabalho levantamos a hipótese de que não apenas é possível realizar a identificação de autoria através da assinatura emocional dos autores, mas também é possível traçar uma assinatura emocional das épocas literárias em que estes autores se encontram. Partimos do princípio que determinados estágios na história da literatura como Romantismo, Renascença, Iluminismo e compartilham aspectos e perspectivas psicológicas similares dentro de sua obras.
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="scatter"></div>
+            </div>
+        </div>
+        <div style="margin-top: 50px;" class="row">
+            <div class="col-lg-5">
+                <h3>Análise da Polaridade de Sentimentos Autoral</h3>
+                <div>
+                    Para a identificação da assinatura emocional de cada autor, foram extraı́das diversas caracterı́sticas das obras literárias em questão. Essa extração é realizada através da contagem do percentual de palavras relacionadas a cada caracterı́sticas. Por exemplo, caso hajam 100 palavras relacionadas ao sentimento de tristeza (sadness) em um texto que possui no total 1.000 palavras, o percentual de ocorrência da tristeza é 0.1. Devido à grande quantidade de palavras que não correspondem a nenhuma feature, os percentuais ficam muito próximos de 0.1, a fim de tornar mais fácil a identificação da assinatura emocional para cada
+                    autor foi realizada uma normalização Min-Max, desta forma é valorizada a diferença entre cada autor, sendo aquele possui o maior valor para feature Tristeza é atribuı́do 100 e o autor com menor ocorrência de palavras ligadas a tristeza é atribuı́do 0.
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="posneg plot"></div>
+            </div>
+        </div>
+        <div style="margin-top: 50px;" class="row">
+            <div class="col-lg-4">
+                <h3>Assinatura Emocional dos Autores</h3>
+                <div>
+                    Existem diversas features que permitem fazer uma análise da assinatura emocional de um autor. No campo da análise de sentimentos destacam-se analises das emoções positivas e negativas (positive and negative emotions), assim como sentimentos associados como tristeza (sadness) e alegria (joy). Ao confrontar essas features para diversos não só conseguimos entender características das conjunto das obras desse autor, mas também como elas servem para diferencia-los. Dessa forma, com o auxílio do dicionário do LIWC foi possível extrair as quatro features analisadas (Sadness, Negative, Positive and Joy). Além de permitir a distinção entre os autores, esse tipo de análise permite fazer recomendações aos usuários a cerca de emoções mais frequentes nas obras escolhidas.
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <h3 class="text-center">Compare até 4 Assinaturas</h3>
+                <h5 class="text-center">Coloque o mouse sobre a barra para saber qual feature ela representa</h5>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="fingerprint0 plot"></div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="fingerprint1 plot"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="fingerprint2 plot"></div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="fingerprint3 plot"></div>
+                    </div>
+                </div>
 
-<div class="main">
-	 <div>
-		<div class="scatter"></div>
-		<div class="authors">
-			<div class="title_author font"><b>Authors</b></div>
-		</div>
-	</div>
-	<div class="vspace"></div>
-	<div>
-		<div class="fingerprint plot">
-		</div>
-		<div class="posneg plot"></div>
-	</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Authors</h3>
+                <div class="authors">
+
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 50px;" class="row">
+            <div class="col-lg-4">
+                <h3>Atributos Utilizados Neste Trabalho</h3>
+                <div>
+                    A tabela ao lado apresenta todos os atributos extraidos dos texto com o propósito para identificar autoria neste trabalho. O primeiro conjunto de de atributos é fornecido pelo Emolex também conhecido como NRC Emotion Lexicon, ele contém mais de 14 mil palavras associadas a 8 emoções básicas mostradas na tabela.
+                    O segundo conjunto de atributos é fornecido pelo LIWC (Linguistic Inquiry and Word Count), uma ferramenta paga criada para realizar uma série de análises lingüı́sticas em textos. Apesar de possuir diversos outros atributos, utilizamos apenas 52 relacionados a psicometria.
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <style type="text/css">
+                    /*.tg  {border-collapse:collapse;border-spacing:0;}*/
+                    /*.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}*/
+                    /*.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}*/
+                    /*.tg .tg-baqh{text-align:center;vertical-align:top}*/
+                    /*.tg .tg-lqy6{text-align:right;vertical-align:top}*/
+                    /*.tg .tg-yw4l{vertical-align:top}*/
+                </style>
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th class="tg-baqh" colspan="3">Atributos do Emolex</th>
+                        </tr>
+                        <tr>
+                            <th class="tg-baqh">Atributo</th>
+                            <th class="tg-baqh">Exemplos</th>
+                            <th class="tg-baqh">Qnt (14182 palavras)</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td class="tg-yw4l">Positive</td>
+                        <td class="tg-yw4l">abundance,shine, love</td>
+                        <td class="tg-lqy6">2312</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Negative</td>
+                        <td class="tg-yw4l">abadon,death,nausea,hate</td>
+                        <td class="tg-lqy6">3324</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Anger</td>
+                        <td class="tg-yw4l">doomsday,rage,savage</td>
+                        <td class="tg-lqy6">1247</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Anticipation</td>
+                        <td class="tg-yw4l">inquiry,prognostic,prophecy</td>
+                        <td class="tg-lqy6">839</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Disgust</td>
+                        <td class="tg-yw4l">prostitute,cholera,crap</td>
+                        <td class="tg-lqy6">1058</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Fear</td>
+                        <td class="tg-yw4l">wilderness,threat,terrorism</td>
+                        <td class="tg-lqy6">1476</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Joy</td>
+                        <td class="tg-yw4l">elegant,bless,amused</td>
+                        <td class="tg-lqy6">689</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Sadness</td>
+                        <td class="tg-yw4l">punish,prison,fat</td>
+                        <td class="tg-lqy6">1191</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Surprise</td>
+                        <td class="tg-yw4l">rarity,playful,mystery</td>
+                        <td class="tg-lqy6">534</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Trust</td>
+                        <td class="tg-yw4l">radiance,proven,philosopher</td>
+                        <td class="tg-lqy6">1231</td>
+                    </tr>
+                    <thead>
+                    <tr>
+                        <th class="tg-baqh" colspan="3">Atributos do LIWC 2015</th>
+                    </tr>
+                    <tr>
+                        <th class="tg-baqh">Atributo</th>
+                        <th class="tg-baqh">Exemplos</th>
+                        <th class="tg-baqh">Qnt (6548 palavras)</th>
+                    </tr>
+                    </thead>
+
+                    <tr>
+                        <td class="tg-yw4l">Affective</td>
+                        <td class="tg-yw4l">processes affect happy, cried</td>
+                        <td class="tg-lqy6">1393</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Positive</td>
+                        <td class="tg-yw4l">emotion posemo love, nice, sweet</td>
+                        <td class="tg-lqy6">620</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Negative</td>
+                        <td class="tg-yw4l">emotion negemo hurt, ugly, nasty</td>
+                        <td class="tg-lqy6">744</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Anxiety</td>
+                        <td class="tg-yw4l">anx worried, fearful</td>
+                        <td class="tg-lqy6">116</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Anger</td>
+                        <td class="tg-yw4l">anger hate, kill, annoyed</td>
+                        <td class="tg-lqy6">230</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Sadness</td>
+                        <td class="tg-yw4l">sad crying, grief, sad</td>
+                        <td class="tg-lqy6">136</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Social</td>
+                        <td class="tg-yw4l">processes social mate, talk, they</td>
+                        <td class="tg-lqy6">756</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Family</td>
+                        <td class="tg-yw4l">family daughter, dad, aunt</td>
+                        <td class="tg-lqy6">118</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Friends</td>
+                        <td class="tg-yw4l">friend buddy, neighbor</td>
+                        <td class="tg-lqy6">95</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Female</td>
+                        <td class="tg-yw4l">references female girl, her, mom</td>
+                        <td class="tg-lqy6">124</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Male</td>
+                        <td class="tg-yw4l">references male boy, his, dad</td>
+                        <td class="tg-lqy6">116</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Cognitive</td>
+                        <td class="tg-yw4l">processes cogproc cause, know, ought</td>
+                        <td class="tg-lqy6">797</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Insight</td>
+                        <td class="tg-yw4l">insight think, know</td>
+                        <td class="tg-lqy6">259</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Causation</td>
+                        <td class="tg-yw4l">cause because, effect</td>
+                        <td class="tg-lqy6">135</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Discrepancy</td>
+                        <td class="tg-yw4l">discrep should, would</td>
+                        <td class="tg-lqy6">83</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Tentative</td>
+                        <td class="tg-yw4l">tentat maybe, perhaps</td>
+                        <td class="tg-lqy6">178</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Certainty</td>
+                        <td class="tg-yw4l">certain always, never</td>
+                        <td class="tg-lqy6">113</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Differentiation</td>
+                        <td class="tg-yw4l">differ hasn’t, but, else</td>
+                        <td class="tg-lqy6">81</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Perceptual</td>
+                        <td class="tg-yw4l">processes percept look, heard, feeling</td>
+                        <td class="tg-lqy6">436</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">See</td>
+                        <td class="tg-yw4l">see view, saw, seen</td>
+                        <td class="tg-lqy6">126</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Hear</td>
+                        <td class="tg-yw4l">hear listen, hearing</td>
+                        <td class="tg-lqy6">93</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Feel</td>
+                        <td class="tg-yw4l">feel feels, touch</td>
+                        <td class="tg-lqy6">128</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Biological</td>
+                        <td class="tg-yw4l">processes bio eat, blood, pain</td>
+                        <td class="tg-lqy6">748</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Body</td>
+                        <td class="tg-yw4l">body cheek, hands, spit</td>
+                        <td class="tg-lqy6">215</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Health</td>
+                        <td class="tg-yw4l">health clinic, flu, pill</td>
+                        <td class="tg-lqy6">294</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Sexual</td>
+                        <td class="tg-yw4l">sexual horny, love, incest</td>
+                        <td class="tg-lqy6">131</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Ingestion</td>
+                        <td class="tg-yw4l">ingest dish, eat, pizza</td>
+                        <td class="tg-lqy6">184</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Drives</td>
+                        <td class="tg-yw4l">drives</td>
+                        <td class="tg-lqy6">1103</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Affiliation</td>
+                        <td class="tg-yw4l">affiliation ally, friend, social</td>
+                        <td class="tg-lqy6">248</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Achievement</td>
+                        <td class="tg-yw4l">achieve win, success, better</td>
+                        <td class="tg-lqy6">213</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Power</td>
+                        <td class="tg-yw4l">power superior, bully</td>
+                        <td class="tg-lqy6">518</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Reward</td>
+                        <td class="tg-yw4l">reward take, prize, benefit</td>
+                        <td class="tg-lqy6">120</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Risk</td>
+                        <td class="tg-yw4l">risk danger, doubt</td>
+                        <td class="tg-lqy6">103</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Past</td>
+                        <td class="tg-yw4l">focus focuspast ago, did, talked</td>
+                        <td class="tg-lqy6">341</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Present</td>
+                        <td class="tg-yw4l">focus focuspresent today, is, now</td>
+                        <td class="tg-lqy6">424</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Future</td>
+                        <td class="tg-yw4l">focus focusfuture may, will, soon</td>
+                        <td class="tg-lqy6">97</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Relativity</td>
+                        <td class="tg-yw4l">relativ area, bend, exit</td>
+                        <td class="tg-lqy6">974</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Motion</td>
+                        <td class="tg-yw4l">motion arrive, car, go</td>
+                        <td class="tg-lqy6">325</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Space</td>
+                        <td class="tg-yw4l">space down, in, thin</td>
+                        <td class="tg-lqy6">360</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Time</td>
+                        <td class="tg-yw4l">time end, until, season</td>
+                        <td class="tg-lqy6">310</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Work</td>
+                        <td class="tg-yw4l">work job, majors, xerox</td>
+                        <td class="tg-lqy6">444</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Leisure</td>
+                        <td class="tg-yw4l">leisure cook, chat, movie</td>
+                        <td class="tg-lqy6">296</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Home</td>
+                        <td class="tg-yw4l">home kitchen, landlord</td>
+                        <td class="tg-lqy6">100</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Money</td>
+                        <td class="tg-yw4l">money audit, cash, owe</td>
+                        <td class="tg-lqy6">226</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Religion</td>
+                        <td class="tg-yw4l">relig altar, church</td>
+                        <td class="tg-lqy6">174</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Death</td>
+                        <td class="tg-yw4l">death bury, coffin, kill</td>
+                        <td class="tg-lqy6">74</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Informal</td>
+                        <td class="tg-yw4l">language informal</td>
+                        <td class="tg-lqy6">380</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Swear</td>
+                        <td class="tg-yw4l">words swear fuck, damn, shit</td>
+                        <td class="tg-lqy6">131</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Netspeak</td>
+                        <td class="tg-yw4l">netspeak btw, lol, thx</td>
+                        <td class="tg-lqy6">209</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Assent</td>
+                        <td class="tg-yw4l">assent agree, OK, yes</td>
+                        <td class="tg-lqy6">36</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Nonfluencies</td>
+                        <td class="tg-yw4l">nonflu er, hm, umm</td>
+                        <td class="tg-lqy6">19</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l">Fillers</td>
+                        <td class="tg-yw4l">filler Imean, youknow</td>
+                        <td class="tg-lqy6">14</td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Resultados Alcançados</h2>
+                Algumas técnica de aprendizado de máquina foram aplicadas. Usando-se um algoritmo SVM, com validação cruzada dividindo-se os dados em 10 e usando-se cada autor sendo uma classe, obteve-se o resultado de uma F measure de 0,7. Outros métodos obtiveram pior resultado, usando-se o "leave one out", ou seja, treinando-se todos os dados menos um, e variando-se este em todos os dados, obteve-se um Fmeasure de 0,64. Testes variando-se o número de autores mostram que o aumento de autores torna a identificação mais dificil, e que o desempenho do algoritmo também tende a cair.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-offset-4 col-lg-4">
+                <h2>Agradecimentos</h2>
+                Agradecemos a Professora Raquel Minar, pela inspiração neste trabalho e o suporte às ideias aqui desenvolvidas. Agradecemos ao moniotr Diego pelo apoio às duvidas que apareceram ao longo desse semestre.
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script src="main.js" charset="utf-8"></script>
 <script type="text/javascript">
 	plot("div.scatter","div.fingerprint","div.posneg","div.authors");
+</script>
+
+<script>
+    $(function(){
+        $('.authors').columnize({height:100,width : 50});
+    });
 </script>
 </body>
 </html>

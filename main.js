@@ -1,8 +1,10 @@
-var fingerprint = {}
-var scatter = {}
-var posneg = {}
-var dict = {}
+var fingerprints = [];
+var scatter = {};
+var posneg = {};
+var dict = {};
 var authors = [];
+var selected_authors = [];
+var full_data;
 // var data_posneg = [];
 
 function capFirstChar(s) {
@@ -213,8 +215,10 @@ function pre_fingerprint(local) {
 	// var margin = {top: 20, right: 20, bottom: 70, left: 40},
 	//     width = 600 - margin.left - margin.right,
 	//     height = 300 - margin.top - margin.bottom;
+	var fingerprint = {};
+
 	fingerprint.margin = {top: 20, right: 20, bottom: 20, left: 30};
-	fingerprint.width = 500 - fingerprint.margin.left - fingerprint.margin.right;
+	fingerprint.width = 400 - fingerprint.margin.left - fingerprint.margin.right;
 	fingerprint.height = 250 - fingerprint.margin.top - fingerprint.margin.bottom;
 
 	fingerprint.xScale = d3.scale.ordinal().rangeBands([0, fingerprint.width], .1);
@@ -241,10 +245,12 @@ function pre_fingerprint(local) {
 		  "translate(" + fingerprint.margin.left + "," + fingerprint.margin.top + ")");
     
 	// add the tooltip area to the webpage
+
 	fingerprint.tooltip = d3.select("body").append("div")
 	    .attr("class", "tooltip tooltip_bar")
 	    .style("opacity", 0);
 
+	fingerprints.push(fingerprint);
 }
 
 function values(obj) {
@@ -256,8 +262,75 @@ function values(obj) {
 	return v;
 }
 
+function get_author_features(author){
+	var data = {};
+	data.positive = author.positive;
+	data.negative = author.negative;
+	data.anger_emolex = author.anger_emolex;
+	data.anticipation = author.anticipation;
+	data.disgust = author.disgust;
+	data.fear = author.fear;
+	data.joy = author.joy;
+	data.sadness = author.sadness;
+	data.surprise = author.surprise;
+	data.trust = author.trust;
+	data.affect = author.affect;
+	data.posemo = author.posemo;
+	data.negemo = author.negemo;
+	data.anx = author.anx;
+	data.anger = author.anger;
+	data.sad = author.sad;
+	data.social = author.social;
+	data.family = author.family;
+	data.friend = author.friend;
+	data.female = author.female;
+	data.male = author.male;
+	data.cogproc = author.cogproc;
+	data.insight = author.insight;
+	data.cause = author.cause;
+	data.discrep = author.discrep;
+	data.tentat = author.tentat;
+	data.certain = author.certain;
+	data.differ = author.differ;
+	data.percept = author.percept;
+	data.see = author.see;
+	data.hear = author.hear;
+	data.feel = author.feel;
+	data.bio = author.bio;
+	data.body = author.body;
+	data.health = author.health;
+	data.sexual = author.sexual;
+	data.ingest = author.ingest;
+	data.drives = author.drives;
+	data.affiliation = author.affiliation;
+	data.achiev = author.achiev;
+	data.power = author.power;
+	data.reward = author.reward;
+	data.risk = author.risk;
+	data.focuspast = author.focuspast;
+	data.focuspresent = author.focuspresent;
+	data.focusfuture = author.focusfuture;
+	data.relativ = author.relativ;
+	data.motion = author.motion;
+	data.space = author.space;
+	data.time = author.time;
+	data.work = author.work;
+	data.leisure = author.leisure;
+	data.home = author.home;
+	data.money = author.money;
+	data.relig = author.relig;
+	data.death = author.death;
+	data.informal = author.informal;
+	data.swear = author.swear;
+	data.netspeak = author.netspeak;
+	data.assent = author.assent;
+	data.nonflu = author.nonflu;
+	data.filler = author.filler;
+	return data;
+}
+
 function update_fingerprint(author) {
-	data = {};
+	var data = {};
 	data.positive = author.positive;
 	data.negative = author.negative;
 	data.anger_emolex = author.anger_emolex;
@@ -405,159 +478,95 @@ function update_fingerprint(author) {
 }
 
 /* Fingerprint bar chart */
-function plot_fingerprint(author) {
-	data = {};
-	data.positive = author.positive;
-	data.negative = author.negative;
-	data.anger_emolex = author.anger_emolex;
-	data.anticipation = author.anticipation;
-	data.disgust = author.disgust;
-	data.fear = author.fear;
-	data.joy = author.joy;
-	data.sadness = author.sadness;
-	data.surprise = author.surprise;
-	data.trust = author.trust;
-	data.affect = author.affect;
-	data.posemo = author.posemo;
-	data.negemo = author.negemo;
-	data.anx = author.anx;
-	data.anger = author.anger;
-	data.sad = author.sad;
-	data.social = author.social;
-	data.family = author.family;
-	data.friend = author.friend;
-	data.female = author.female;
-	data.male = author.male;
-	data.cogproc = author.cogproc;
-	data.insight = author.insight;
-	data.cause = author.cause;
-	data.discrep = author.discrep;
-	data.tentat = author.tentat;
-	data.certain = author.certain;
-	data.differ = author.differ;
-	data.percept = author.percept;
-	data.see = author.see;
-	data.hear = author.hear;
-	data.feel = author.feel;
-	data.bio = author.bio;
-	data.body = author.body;
-	data.health = author.health;
-	data.sexual = author.sexual;
-	data.ingest = author.ingest;
-	data.drives = author.drives;
-	data.affiliation = author.affiliation;
-	data.achiev = author.achiev;
-	data.power = author.power;
-	data.reward = author.reward;
-	data.risk = author.risk;
-	data.focuspast = author.focuspast;
-	data.focuspresent = author.focuspresent;
-	data.focusfuture = author.focusfuture;
-	data.relativ = author.relativ;
-	data.motion = author.motion;
-	data.space = author.space;
-	data.time = author.time;
-	data.work = author.work;
-	data.leisure = author.leisure;
-	data.home = author.home;
-	data.money = author.money;
-	data.relig = author.relig;
-	data.death = author.death;
-	data.informal = author.informal;
-	data.swear = author.swear;
-	data.netspeak = author.netspeak;
-	data.assent = author.assent;
-	data.nonflu = author.nonflu;
-	data.filler = author.filler;
-	var epoch = author.epoch;
-	var nome = author.author;
-
-
+function plot_fingerprint(fingerprint_authors) {
+	if(fingerprint_authors.length == 0) return;
 	// fingerprint.svg.select("label_fingerprint").text(nome);
-	fingerprint.svg
-		.append("text")
-		.attr("class","label_fingerprint")
-		.attr("x", fingerprint.width / 2) 
-		.attr("y", 0-(fingerprint.margin.top / 2))
-		.attr("text-anchor", "middle")  
-		.style("font-size", "12px") 
-		.text(nome);
+	for(var index in fingerprints){
+		var fingerprint = fingerprints[index];
+		if(index >= fingerprint_authors.length){
+			fingerprint.svg.selectAll("*").remove();
+			return
+		}
+		var author_features = get_author_features(fingerprint_authors[index]);
+		var nome = fingerprint_authors[index].author;
 
-	features_name = Object.keys(data);
-	features_value = values(data);
-	min_feature = d3.min(features_value);
-	max_feature = d3.max(features_value);
-	
-	fingerprint.xScale.domain(features_name);
-	fingerprint.yScale.domain([min_feature, max_feature]);
-	// eixo X
-	fingerprint.svg.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate(0," + fingerprint.height + ")")
-		.transition().duration(300)
-		.call(fingerprint.xAxis)
-		// .selectAll("text")
-		// .style("text-anchor", "end")
-		// .attr("dx", "-.8em")
-		// .attr("dy", "-.55em")
-		// .attr("transform", "rotate(-90)" );
+		fingerprint.svg
+			.append("text")
+			.attr("class","label_fingerprint")
+			.attr("x", fingerprint.width / 2)
+			.attr("y", 0-(fingerprint.margin.top / 2))
+			.attr("text-anchor", "middle")
+			.style("font-size", "12px")
+			.style("font-weight", "bold")
+			.text(nome);
 
-	// eixo Y
-	fingerprint.svg.append("g")
-		.attr("class", "y axis")
-		.transition().duration(300)
-		.call(fingerprint.yAxis);
-		// .append("text")
-		// .attr("transform", "rotate(-90)")
-		// .attr("y", 6)
-		// .attr("dy", ".71em")
-		// .style("text-anchor", "end")
-		// .text("Value");
+		var features_name = Object.keys(author_features);
+		var features_value = values(author_features);
+		var min_feature = d3.min(features_value);
+		var max_feature = d3.max(features_value);
 
-	var features = [];
-	for (i = 0; i < features_name.length; i++) { 
-		features[i] = {};
-		features[i].name = features_name[i];
-		features[i].value = features_value[i];
+		fingerprint.xScale.domain(features_name);
+		fingerprint.yScale.domain([min_feature, max_feature]);
+		// eixo X
+		fingerprint.svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + fingerprint.height + ")")
+			.transition().duration(300)
+			.call(fingerprint.xAxis)
+
+
+		// eixo Y
+		fingerprint.svg.append("g")
+			.attr("class", "y axis")
+			.transition().duration(300)
+			.call(fingerprint.yAxis);
+
+
+		var features = [];
+		for (var i = 0; i < features_name.length; i++) {
+			features[i] = {};
+			features[i].name = features_name[i];
+			features[i].value = features_value[i];
+		}
+
+
+		// THIS IS THE ACTUAL WORK!
+		var bars = fingerprint.svg.selectAll(".bar").data(features) // (data) is an array/iterable thing, second argument is an ID generator function
+
+		bars.exit()
+			.transition()
+			.duration(300)
+			.attr("y", fingerprint.yScale(0))
+			// .attr("height", height - y(0))
+			.style('fill-opacity', 1e-6)
+			.remove();
+
+		// data that needs DOM = enter() (a set/selection, not an event!)
+		bars.enter().append("rect")
+			.attr("class", "bar")
+			.attr("y", fingerprint.yScale(0));
+		// .attr("height", height - y(0));
+
+		// the "UPDATE" set:
+		bars.transition().duration(300)//.attr("x", function(d) { return fingerprint.xValue(d); })
+			.attr("x", function(d) { return fingerprint.xScale(d.name); })
+			.attr("width", fingerprint.xScale.rangeBand())
+			.attr("y", function(d) { return fingerprint.yScale(d.value); })
+			.attr("height", function(d) { return fingerprint.height - fingerprint.yScale(d.value); });
+		bars.on("mouseover", function(d) {
+				fingerprint.tooltip.transition()
+					.duration(200)
+					.style("opacity", .9);
+				fingerprint.tooltip.html("<span>" + d.name + "</span>")
+					.style("left", (d3.event.pageX) + "px")
+					.style("top", (d3.event.pageY) + "px");
+			})
+			.on("mouseout", function(d) {
+				fingerprint.tooltip.transition()
+					.duration(500)
+					.style("opacity", 0);
+			});
 	}
-
-
-	// THIS IS THE ACTUAL WORK!
-	var bars = fingerprint.svg.selectAll(".bar").data(features) // (data) is an array/iterable thing, second argument is an ID generator function
-
-	bars.exit()
-	.transition()
-	.duration(300)
-	.attr("y", fingerprint.yScale(0))
-	// .attr("height", height - y(0))
-	.style('fill-opacity', 1e-6)
-	.remove();
-
-	// data that needs DOM = enter() (a set/selection, not an event!)
-	bars.enter().append("rect")
-	.attr("class", "bar")
-	.attr("y", fingerprint.yScale(0));
-	// .attr("height", height - y(0));
-
-	// the "UPDATE" set:
-	bars.transition().duration(300)//.attr("x", function(d) { return fingerprint.xValue(d); }) 
-		.attr("x", function(d) { return fingerprint.xScale(d.name); })
-		.attr("width", fingerprint.xScale.rangeBand())
-		.attr("y", function(d) { return fingerprint.yScale(d.value); })
-		.attr("height", function(d) { return fingerprint.height - fingerprint.yScale(d.value); });
-	bars.on("mouseover", function(d) {
-		   fingerprint.tooltip.transition()
-		       .duration(200)
-			.style("opacity", .9);
-		   fingerprint.tooltip.html(d.name)
-			.style("left", (d3.event.pageX + 5) + "px")
-			.style("top", (d3.event.pageY - 28) + "px");
-		})
-		.on("mouseout", function(d) {
-		   fingerprint.tooltip.transition()
-			.duration(500)
-			.style("opacity", 0);
-		});
 }
 
 function pre_posneg(local) {
@@ -565,8 +574,8 @@ function pre_posneg(local) {
 	//     width = 800 - margin.left - margin.right,
 	//     height = 400 - margin.top - margin.bottom;
 	posneg.margin = {top: 50, right: 60, bottom: 10, left:150};
-	posneg.width = 500 - posneg.margin.left - posneg.margin.right;
-	posneg.height = 300 - posneg.margin.top - posneg.margin.bottom;
+	posneg.width = 600 - posneg.margin.left - posneg.margin.right;
+	posneg.height = 900 - posneg.margin.top - posneg.margin.bottom;
 
 	posneg.yScale = d3.scale.ordinal()
 	    .rangeRoundBands([0, posneg.height], .3);
@@ -640,7 +649,7 @@ function handle_posneg_data(data) {
 
 function check_author(author,rem) {
 	// d3.selectAll("input").filter("#"+author).attr("checked",rem);
-	d3.selectAll("input").filter("#"+author).node().checked = rem;
+	//d3.selectAll("input").filter("#"+author).node().checked = rem;
 }
 
 function get_check_author(author) {
@@ -660,9 +669,9 @@ function plot_posneg(data) {
 		return d.boxes["3"].x1;
 	});
 
-	for (i=0; i<data.length; i++) {
-		check_author(data[i].author,true);
-	}
+	//for (i=0; i<data.length; i++) {
+	//	check_author(data[i].author,true);
+	//}
 
 	posneg.xScale.domain([min_val, max_val]).nice();
 	posneg.yScale.domain(data.map(function(d) { return d.author; }));
@@ -727,14 +736,14 @@ function plot_posneg(data) {
 	  //     .style("text-anchor", "start")
 	      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
 
-	  // posneg.vakken.insert("rect",":first-child")
-	  //     .attr("height", posneg.yScale.rangeBand())
-	  //     .attr("x", "1")
-	  //     .attr("width", posneg.width)
-	  //     .attr("fill-opacity", "0.5")
-	  //     .style("fill", "#F5F5F5")
-	  //     .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
-          //
+	  posneg.vakken.insert("rect",":first-child")
+	      .attr("height", posneg.yScale.rangeBand())
+	      .attr("x", "1")
+	      .attr("width", posneg.width)
+	      .attr("fill-opacity", "0.5")
+	      .style("fill", "#F5F5F5")
+	      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+
 	  posneg.svg.append("g")
 	      .attr("class", "y axis")
 	  .append("line")
@@ -785,9 +794,14 @@ function plot_posneg(data) {
 data_posneg = [];
 function plot(local_scatter,local_fingerprint,local_posneg,local_authors) {
 	pre_scatter(local_scatter);
-	pre_fingerprint(local_fingerprint);
+	pre_fingerprint(".fingerprint0");
+	pre_fingerprint(".fingerprint1");
+	pre_fingerprint(".fingerprint2");
+	pre_fingerprint(".fingerprint3");
+
 	pre_posneg(local_posneg);
 	d3.csv("scatter_data.csv", function(error, data) {
+		full_data = data;
 		handle_scatter_data(data);
 		// data_posneg = data.slice(0)
 		handle_posneg_data(data);
@@ -796,11 +810,21 @@ function plot(local_scatter,local_fingerprint,local_posneg,local_authors) {
 			/* name = author.author */
 			dict[author.author] = author;
 		});
+		//selected_authors.push(data[0]);
+		//selected_authors.push(data[1]);
+		//selected_authors.push(data[2]);
+		//selected_authors.push(data[3]);
 		authors = Object.keys(dict);
-		plot_scatter(data);
-		plot_fingerprint(data[0]);
+		//plot_scatter(data);
 		plot_authors(local_authors,authors);
-		plot_posneg(data.slice(1,7));
+		$('.authors').columnize({height:200,width : 200});
+		plot_posneg(data);
+	});
+
+	d3.csv("epoch_data.csv", function(error, data) {
+		handle_scatter_data(data);
+		plot_scatter(data);
+
 	});
 }
 
@@ -810,11 +834,16 @@ function update_posneg(author,rem) {
 	// posneg.tooltip = d3.select("body").append("div")
 	//     .attr("class", "tooltip tooltip_posneg")
 	//     .style("opacity", 0);
-	console.log("author:" + author);
-	console.log("rem:" + rem);
-	// alert('change');
 
 
+
+	  posneg.svg.select(".x.axis")
+	  	.transition().duration(300)
+		.call(posneg.xAxis);
+
+	  posneg.svg.select(".y.axis")
+	  	.transition().duration(300)
+		.call(posneg.yAxis);
 
 
 
@@ -843,21 +872,7 @@ function update_posneg(author,rem) {
 	posneg.xScale.domain([min_val, max_val]).nice();
 	posneg.yScale.domain(data.map(function(d) { return d.author; }));
 
-
-	posneg.svg.select(".x.axis")
-	.transition().duration(300)
-	.call(posneg.xAxis);
-
-	posneg.svg.select(".y.axis")
-	.transition().duration(300)
-	.call(posneg.yAxis);
-
-	posneg.vakken.selectAll(".bar")
-		.data(data,function(d) { return d.boxes; })
-		.exit()
-		.remove();
-
-	bars = posneg.vakken.selectAll(".bar")
+	bars.data(function(d) { return d.boxes; })
 		.enter()
 		.append("g")
 		// .attr("class", "subbar")
@@ -894,13 +909,13 @@ function update_posneg(author,rem) {
 	  //     .style("text-anchor", "start")
 	      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
 
-	  // posneg.vakken.insert("rect",":first-child")
-	  //     .attr("height", posneg.yScale.rangeBand())
-	  //     .attr("x", "1")
-	  //     .attr("width", posneg.width)
-	  //     .attr("fill-opacity", "0.5")
-	  //     .style("fill", "#F5F5F5")
-	  //     .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+	  posneg.vakken.insert("rect",":first-child")
+	      .attr("height", posneg.yScale.rangeBand())
+	      .attr("x", "1")
+	      .attr("width", posneg.width)
+	      .attr("fill-opacity", "0.5")
+	      .style("fill", "#F5F5F5")
+	      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
 
 	  // posneg.svg.append("g")
 	  //     .attr("class", "y axis")
@@ -950,6 +965,14 @@ function update_posneg(author,rem) {
 
 }
 
+function get_data_from_author_name(author_name){
+	for(var index in full_data){
+		if(full_data[index].author == author_name){
+			return full_data[index];
+		}
+	}
+}
+
 
 // var divs = new Object();
 function plot_authors(local,authors) {
@@ -959,24 +982,55 @@ function plot_authors(local,authors) {
 		.data(authors)
 		.enter()
 		.append("div")
-		.attr("class","author");
+		.attr("class","author_item");
+	var fun = function(d){return d;};
 
-	// divs.html(function(d){return d;});
-	fun = function(d){return d;};
-	// divs.append("label")
-	// 	.attr("class","author")
-	// 	.html(function(d) {
-	// 		return '<input type="checkbox" name="author" value=' + 
-	// 			d + ">" + d;
-	// 	});
-
-	var checkboxes = divs.append("input")
+	divs.append("input")
 		.attr("type","checkbox")
 		.attr("name","author")
-		.attr("id",fun)
-		.on("click",function(d) {update_posneg(d,this.checked)});
-	divs.append("a").html(fun);
-	 // divs.append("a").html(fun);
-	 // checkboxes
-// d3.select("input").on("change", change);
+		.attr("class","authors_checkbox")
+		.attr("id",fun);
+
+	divs.append("span").html(fun);
+
+	//Control Check Box
+	$(".authors_checkbox").change(function(){
+		var checkeds = $(".authors_checkbox:checked");
+
+		//Nao deixar mais que 4 slecionados
+		if(checkeds.length > 4){
+			this.checked = false;
+			alert("Não é permitido selecionar mais que 4 autores.")
+			return;
+		}
+		//Checa se retirou a selecao e remove item
+		if(this.checked==false){
+			for(var index in selected_authors){
+				if(selected_authors[index].author == this.id){
+					fingerprints[index].svg.selectAll("*").remove();
+					selected_authors.splice(index,1);
+					break
+				}
+			}
+		}
+		//Se é selecao nova adicona
+		if(this.checked==true){
+			selected_authors.push(get_data_from_author_name(this.id));
+		}
+		plot_fingerprint(selected_authors);
+	});
+	//Check First 4 by Default
+	var to_select_authors = authors.slice(0,4);
+	for(var i = 0; i < to_select_authors.length; i++){
+		for(var index_checkbox in $(".authors_checkbox")){
+			if ($(".authors_checkbox")[index_checkbox].id == to_select_authors[i]){
+				$(".authors_checkbox")[index_checkbox].checked = true;
+				$($(".authors_checkbox")[index_checkbox]).trigger("change");
+			}
+		}
+	}
+	//selected_authors = to_select_authors.map(get_author_features);
+
+
 }
+
