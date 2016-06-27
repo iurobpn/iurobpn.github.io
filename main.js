@@ -727,14 +727,14 @@ function plot_posneg(data) {
 	  //     .style("text-anchor", "start")
 	      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
 
-	  posneg.vakken.insert("rect",":first-child")
-	      .attr("height", posneg.yScale.rangeBand())
-	      .attr("x", "1")
-	      .attr("width", posneg.width)
-	      .attr("fill-opacity", "0.5")
-	      .style("fill", "#F5F5F5")
-	      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
-
+	  // posneg.vakken.insert("rect",":first-child")
+	  //     .attr("height", posneg.yScale.rangeBand())
+	  //     .attr("x", "1")
+	  //     .attr("width", posneg.width)
+	  //     .attr("fill-opacity", "0.5")
+	  //     .style("fill", "#F5F5F5")
+	  //     .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+          //
 	  posneg.svg.append("g")
 	      .attr("class", "y axis")
 	  .append("line")
@@ -810,16 +810,11 @@ function update_posneg(author,rem) {
 	// posneg.tooltip = d3.select("body").append("div")
 	//     .attr("class", "tooltip tooltip_posneg")
 	//     .style("opacity", 0);
+	console.log("author:" + author);
+	console.log("rem:" + rem);
+	// alert('change');
 
 
-
-	  posneg.svg.select(".x.axis")
-	  	.transition().duration(300)
-		.call(posneg.xAxis);
-
-	  posneg.svg.select(".y.axis")
-	  	.transition().duration(300)
-		.call(posneg.yAxis);
 
 
 
@@ -848,7 +843,21 @@ function update_posneg(author,rem) {
 	posneg.xScale.domain([min_val, max_val]).nice();
 	posneg.yScale.domain(data.map(function(d) { return d.author; }));
 
-	bars.data(function(d) { return d.boxes; })
+
+	posneg.svg.select(".x.axis")
+	.transition().duration(300)
+	.call(posneg.xAxis);
+
+	posneg.svg.select(".y.axis")
+	.transition().duration(300)
+	.call(posneg.yAxis);
+
+	posneg.vakken.selectAll(".bar")
+		.data(data,function(d) { return d.boxes; })
+		.exit()
+		.remove();
+
+	bars = posneg.vakken.selectAll(".bar")
 		.enter()
 		.append("g")
 		// .attr("class", "subbar")
@@ -885,13 +894,13 @@ function update_posneg(author,rem) {
 	  //     .style("text-anchor", "start")
 	      // .text(function(d) { return d.N !== 0 && (d.x1-d.x0)>3 ? Math.abs(Math.floor(d.x1-d.x0)) + "%" : "" });
 
-	  posneg.vakken.insert("rect",":first-child")
-	      .attr("height", posneg.yScale.rangeBand())
-	      .attr("x", "1")
-	      .attr("width", posneg.width)
-	      .attr("fill-opacity", "0.5")
-	      .style("fill", "#F5F5F5")
-	      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+	  // posneg.vakken.insert("rect",":first-child")
+	  //     .attr("height", posneg.yScale.rangeBand())
+	  //     .attr("x", "1")
+	  //     .attr("width", posneg.width)
+	  //     .attr("fill-opacity", "0.5")
+	  //     .style("fill", "#F5F5F5")
+	  //     .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
 
 	  // posneg.svg.append("g")
 	  //     .attr("class", "y axis")
@@ -965,7 +974,7 @@ function plot_authors(local,authors) {
 		.attr("type","checkbox")
 		.attr("name","author")
 		.attr("id",fun)
-		.on("change",function(d) {update_posneg(d,this.checked)});
+		.on("click",function(d) {update_posneg(d,this.checked)});
 	divs.append("a").html(fun);
 	 // divs.append("a").html(fun);
 	 // checkboxes
