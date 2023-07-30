@@ -6,37 +6,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 </head>
-<body class="bg-dark-subtle">
-
-<!-- <div class="text-bg-secondary p-5 text-center text-dark">
-  <h1>My First Bootstrap 5 Page</h1>
-  <p>Resize this responsive page to see the effect!</p> 
-</div> -->
-
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+<body class="bg-dark-subtle"  data-bs-spy="scroll" data-bs-target="#menu">
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top" id="menu">
   <div class="container-fluid">
     <a href="#" class="navbar-brand">Iuro Nascimento</a>
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link active" href="#">About me</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#publications">Publications</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Research Interests</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">CV</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Blog</a>
-      </li>
-    </ul>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">About me</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#publications">Publications</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Research Interests</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">CV</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Blog</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<div class="container mt-5">
+<br>
+<div class="container vh-100 mt-5">
   <div class="row">
     <div class="col-sm-4">
       <h2>Iuro Nascimento</h2>
@@ -50,26 +50,14 @@
           <path fill="var(--bs-body-color)" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
       </svg></a>
       </div><br>
-      <!-- <h3 class="mt-4">Some Links</h3>
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Active</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
-      </ul> -->
+
+
       <hr class="d-sm-none">
     </div>
     <div class="col-sm-8">
       <h2>About Me</h2><br>
       <p>Iuro Nascimento is a Ph.D. student at Federal University of Minas Gerais and is part of MACRO research group. His research interest includes robotics, control systems, predictive controllers and artificial inteligence.</p>
+            <br><br><br>
       <div class=" container">
         <div class="row">
           <div class="col">
@@ -96,9 +84,12 @@
   </div>
 </div>
 
-<hr><br>
-<section id="publications">
-<div class="container">
+      <br><br><br>
+
+<hr id="publications"><br>
+<section >
+  <br>
+<div class="container vh-100">
   <div class="row">
     <div class="col-sm-4"><h3>Publications</h3></div>
     <div class="col-sm-8">
@@ -160,7 +151,7 @@
             isbn = {978-1-4503-4512-5}
           }">Cite</button>
 
-          <a href="https://iurobpn.github.io/authorship/" class="border border-primary-subtle rounded px-1 link-underline link-underline-opacity-0">Info</a>
+          <a href="authorship/" class="border border-primary-subtle rounded px-1 link-underline link-underline-opacity-0">Info</a>
         </li>
       </ul>
     </div> 
@@ -169,7 +160,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 
-<footer class="bottom-0 py-5 text-center text-body-secondary bg-dark">
+<footer class="bottom-0 sticky-bottom py-3 text-center text-body-secondary bg-dark">
   <p class="mb-0">
     <a class="link-light link-opacity-50-hover link-underline-opacity-0" href="#">Back to top</a>
   </p>
